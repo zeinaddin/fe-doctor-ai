@@ -1,0 +1,183 @@
+{
+  "brand": {
+    "name": "MedCare",
+    "tagline": "Your Health, Our Priority",
+    "health": "Health"
+  },
+  "common": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone number",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account...",
+    "otherPortals": "Other portals",
+    "allRightsReserved": "All rights reserved",
+    "language": "Language"
+  },
+  "placeholders": {
+    "email": "name@example.com",
+    "patientEmail": "patient@example.com",
+    "doctorEmail": "doctor@example.com",
+    "adminEmail": "admin@example.com",
+    "password": "Enter your password",
+    "firstName": "John",
+    "lastName": "Doe",
+    "phone": "+1 (555) 000-0000"
+  },
+  "stats": {
+    "patientsServed": "Patients Served",
+    "verifiedDoctors": "Verified Doctors",
+    "specializations": "Specializations",
+    "patientRating": "Patient Rating"
+  },
+  "landing": {
+    "hero": {
+      "title": "Modern Healthcare",
+      "titleHighlight": "Management",
+      "subtitle": "Streamline your healthcare experience with our comprehensive platform. Connect with doctors, manage appointments, and access your medical records securely.",
+      "cta": "Get Started",
+      "learnMore": "Learn More",
+      "bookAppointment": "Book Appointment",
+      "trustedPlatform": "Trusted Healthcare Platform"
+    },
+    "portals": {
+      "title": "Choose Your Portal",
+      "subtitle": "Access the platform through your dedicated portal",
+      "accessPortal": "Access Portal",
+      "patient": {
+        "title": "Patient Portal",
+        "description": "Book appointments, access medical records, and consult with AI health assistant",
+        "cta": "Patient Login"
+      },
+      "doctor": {
+        "title": "Doctor Portal",
+        "description": "Manage your practice, view appointments, and access patient records",
+        "cta": "Doctor Login"
+      },
+      "admin": {
+        "title": "Admin Portal",
+        "description": "System administration, user management, and platform analytics",
+        "cta": "Admin Login"
+      }
+    },
+    "features": {
+      "title": "Why Choose MedCare?",
+      "subtitle": "Experience healthcare management reimagined",
+      "madeSimple": "Made Simple",
+      "platformDescription": "Our platform brings together cutting-edge technology and compassionate care to deliver a seamless healthcare experience.",
+      "ai": {
+        "title": "AI Health Assistant",
+        "description": "Get instant health guidance powered by advanced AI technology"
+      },
+      "booking": {
+        "title": "Easy Booking",
+        "description": "Schedule appointments with top doctors in just a few clicks"
+      },
+      "records": {
+        "title": "Digital Records",
+        "description": "Access your complete medical history anytime, anywhere"
+      },
+      "secure": {
+        "title": "Secure & Private",
+        "description": "Your health data is protected with enterprise-grade security"
+      },
+      "telemedicine": {
+        "title": "Telemedicine Ready",
+        "description": "Connect with doctors remotely through our secure video consultation system"
+      },
+      "verifiedProfessionals": {
+        "title": "Verified Professionals",
+        "description": "All healthcare providers are thoroughly vetted and licensed to ensure quality care"
+      },
+      "alwaysAvailable": {
+        "title": "Always Available",
+        "description": "Access your health information and book appointments 24/7 from any device"
+      }
+    },
+    "trust": {
+      "hipaa": "HIPAA Compliant",
+      "secure": "256-bit Encryption",
+      "support": "24/7 Support",
+      "securePrivate": "Secure & Private"
+    },
+    "cta": {
+      "title": "Ready to Transform Your Healthcare Experience?",
+      "subtitle": "Join thousands of patients and healthcare providers on MedCare",
+      "button": "Create Free Account",
+      "healthcareProvider": "I'm a Healthcare Provider"
+    },
+    "footer": {
+      "description": "Modern healthcare platform for patients and providers.",
+      "forPatients": "For Patients",
+      "forProviders": "For Providers",
+      "legal": "Legal",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "copyright": "© {{year}} MedCare. All rights reserved."
+    }
+  },
+  "auth": {
+    "patient": {
+      "title": "Patient Portal",
+      "subtitle": "Sign in to access your health records",
+      "registerSubtitle": "Join MedCare for better healthcare",
+      "createAccount": "Create Account"
+    },
+    "doctor": {
+      "title": "Doctor Portal",
+      "subtitle": "Sign in to manage your practice"
+    },
+    "admin": {
+      "title": "Admin Portal",
+      "subtitle": "System administration access"
+    },
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "createPassword": "Create a password",
+    "confirmYourPassword": "Confirm your password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "registrationSuccess": "Registration successful! Please sign in.",
+    "invalidCredentials": "Invalid credentials. Please try again.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "accessDenied": {
+      "doctor": "Access denied. Doctor credentials required.",
+      "admin": "Access denied. Admin credentials required."
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "aiConsultation": "AI Consultation",
+    "appointments": "Appointments",
+    "findDoctors": "Find Doctors",
+    "medicalRecords": "Medical Records",
+    "applyAsDoctor": "Apply as Doctor",
+    "weeklySchedule": "Weekly Schedule",
+    "patients": "Patients",
+    "users": "Users",
+    "doctors": "Doctors",
+    "specializations": "Specializations",
+    "doctorRequests": "Doctor Requests",
+    "bookings": "Bookings",
+    "symptomChecker": "Symptom Checker"
+  },
+  "portal": {
+    "patient": "Patient Portal",
+    "doctor": "Doctor Portal",
+    "admin": "Admin Dashboard"
+  }
+}
