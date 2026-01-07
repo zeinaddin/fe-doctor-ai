@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Activity,
   ArrowRight,
@@ -94,6 +95,7 @@ const QuickAction = ({ title, description, icon: Icon, onClick, primary }: Quick
 export const PatientDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { firstName } = user ? getUserNames(user) : { firstName: '' };
 
   return (
@@ -101,42 +103,42 @@ export const PatientDashboard: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          Welcome back, {firstName}
+          {t('patientDashboard.welcomeBack', { name: firstName })}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your health and appointments from your personal dashboard.
+          {t('patientDashboard.subtitle')}
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Upcoming Appointments"
+          title={t('patientDashboard.upcomingAppointments')}
           value={0}
           icon={Calendar}
-          description="Scheduled visits"
+          description={t('patientDashboard.scheduledVisits')}
           onClick={() => navigate('/patient/appointments')}
         />
         <StatCard
-          title="Medical Records"
+          title={t('patientDashboard.medicalRecords')}
           value={0}
           icon={FileText}
-          description="Health documents"
+          description={t('patientDashboard.healthDocuments')}
           onClick={() => navigate('/patient/records')}
         />
         <StatCard
-          title="Find Doctors"
-          value="Search"
+          title={t('patientDashboard.findDoctors')}
+          value={t('common.search')}
           icon={Search}
-          description="Browse specialists"
+          description={t('patientDashboard.browseSpecialists')}
           onClick={() => navigate('/patient/find-doctors')}
         />
         <StatCard
-          title="Health Status"
-          value="Good"
+          title={t('patientDashboard.healthStatus')}
+          value={t('patientDashboard.good')}
           icon={Activity}
-          description="Overall wellness"
-          trend="+12% this month"
+          description={t('patientDashboard.overallWellness')}
+          trend={t('patientDashboard.thisMonth')}
         />
       </div>
 
@@ -145,31 +147,31 @@ export const PatientDashboard: React.FC = () => {
         {/* Quick Actions */}
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
+            <CardTitle className="text-lg">{t('patientDashboard.quickActions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <QuickAction
-              title="AI Health Consultation"
-              description="Get instant health insights powered by AI"
+              title={t('patientDashboard.aiHealthConsultation')}
+              description={t('patientDashboard.getInstantHealthInsights')}
               icon={Bot}
               onClick={() => navigate('/patient/ai-consultation')}
               primary
             />
             <QuickAction
-              title="Find a Doctor"
-              description="Search and book with verified specialists"
+              title={t('patientDashboard.findADoctor')}
+              description={t('patientDashboard.searchAndBookSpecialists')}
               icon={Stethoscope}
               onClick={() => navigate('/patient/find-doctors')}
             />
             <QuickAction
-              title="View Appointments"
-              description="Check your upcoming and past visits"
+              title={t('patientDashboard.viewAppointments')}
+              description={t('patientDashboard.checkUpcomingVisits')}
               icon={Calendar}
               onClick={() => navigate('/patient/appointments')}
             />
             <QuickAction
-              title="Medical Records"
-              description="Access your complete health history"
+              title={t('patientDashboard.medicalRecords')}
+              description={t('patientDashboard.accessHealthHistory')}
               icon={FileText}
               onClick={() => navigate('/patient/records')}
             />
@@ -179,34 +181,34 @@ export const PatientDashboard: React.FC = () => {
         {/* Health Tips */}
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Health Insights</CardTitle>
+            <CardTitle className="text-lg">{t('patientDashboard.healthInsights')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                <p className="text-sm font-medium text-primary">Stay Hydrated</p>
+                <p className="text-sm font-medium text-primary">{t('patientDashboard.stayHydrated')}</p>
               </div>
               <p className="text-sm text-muted-foreground">
-                Drink at least 8 glasses of water daily for optimal health.
+                {t('patientDashboard.stayHydratedTip')}
               </p>
             </div>
             <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <p className="text-sm font-medium text-emerald-500">Regular Exercise</p>
+                <p className="text-sm font-medium text-emerald-500">{t('patientDashboard.regularExercise')}</p>
               </div>
               <p className="text-sm text-muted-foreground">
-                Aim for 30 minutes of physical activity each day.
+                {t('patientDashboard.regularExerciseTip')}
               </p>
             </div>
             <div className="p-4 rounded-xl bg-violet-500/5 border border-violet-500/10">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-2 w-2 rounded-full bg-violet-500" />
-                <p className="text-sm font-medium text-violet-500">Quality Sleep</p>
+                <p className="text-sm font-medium text-violet-500">{t('patientDashboard.qualitySleep')}</p>
               </div>
               <p className="text-sm text-muted-foreground">
-                Get 7-9 hours of quality sleep for recovery.
+                {t('patientDashboard.qualitySleepTip')}
               </p>
             </div>
           </CardContent>
@@ -222,14 +224,14 @@ export const PatientDashboard: React.FC = () => {
                 <Bot className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="font-semibold">Try our AI Health Assistant</p>
+                <p className="font-semibold">{t('patientDashboard.tryAiAssistant')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Get instant symptom analysis and personalized recommendations.
+                  {t('patientDashboard.getInstantSymptomAnalysis')}
                 </p>
               </div>
             </div>
             <Button onClick={() => navigate('/patient/ai-consultation')}>
-              Start Consultation
+              {t('patientDashboard.startConsultation')}
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>

@@ -1,5 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Search, Eye, Users as UsersIcon} from 'lucide-react';
 import {format} from 'date-fns';
 import {Card} from '@/components/ui/card';
@@ -13,6 +14,7 @@ import type {Appointment} from '@/types';
 
 export const DoctorPatients: React.FC = () => {
     const {user} = useAuth();
+    const {t} = useTranslation();
     const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(10);
@@ -86,7 +88,7 @@ export const DoctorPatients: React.FC = () => {
     if (error) {
         return (
             <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-                Failed to load patients. Please try again later.
+                {t('doctorPatients.failedToLoad')}
             </div>
         );
     }
@@ -95,11 +97,11 @@ export const DoctorPatients: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">My Patients</h1>
-                    <p className="text-muted-foreground mt-1">View and manage your patient list</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('doctorPatients.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('doctorPatients.subtitle')}</p>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="date-filter">Filter by Date</Label>
+                    <Label htmlFor="date-filter">{t('doctorPatients.filterByDate')}</Label>
                     <Input
                         id="date-filter"
                         type="date"
@@ -116,7 +118,7 @@ export const DoctorPatients: React.FC = () => {
             <div className="relative max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                 <Input
-                    placeholder="Search patients by name or email..."
+                    placeholder={t('doctorPatients.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
@@ -130,13 +132,13 @@ export const DoctorPatients: React.FC = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Phone</TableHead>
-                            <TableHead>Last Visit</TableHead>
-                            <TableHead>Total Visits</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.id')}</TableHead>
+                            <TableHead>{t('common.name')}</TableHead>
+                            <TableHead>{t('common.email')}</TableHead>
+                            <TableHead>{t('common.phone')}</TableHead>
+                            <TableHead>{t('doctorPatients.lastVisit')}</TableHead>
+                            <TableHead>{t('doctorPatients.totalVisits')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -152,7 +154,7 @@ export const DoctorPatients: React.FC = () => {
                                     </TableCell>
                                     <TableCell className="text-muted-foreground">{patient.totalVisits}</TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="icon" title="View patient details">
+                                        <Button variant="ghost" size="icon" title={t('doctorPatients.viewDetails')}>
                                             <Eye className="h-4 w-4"/>
                                         </Button>
                                     </TableCell>
@@ -162,7 +164,7 @@ export const DoctorPatients: React.FC = () => {
                             <TableRow>
                                 <TableCell colSpan={7} className="text-center py-12">
                                     <UsersIcon className="h-12 w-12 mx-auto mb-3 opacity-20 text-muted-foreground"/>
-                                    <p className="text-muted-foreground">No patients found</p>
+                                    <p className="text-muted-foreground">{t('doctorPatients.noPatientsFound')}</p>
                                 </TableCell>
                             </TableRow>
                         )}
@@ -173,8 +175,7 @@ export const DoctorPatients: React.FC = () => {
             {filteredPatients.length > 0 && (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
-                        Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, filteredPatients.length)} of{' '}
-                        {filteredPatients.length} patients
+                        {t('common.showingRange', {from: page * rowsPerPage + 1, to: Math.min((page + 1) * rowsPerPage, filteredPatients.length), total: filteredPatients.length})} {t('doctorPatients.patients')}
                     </p>
                     <div className="flex items-center gap-2">
                         <Button
@@ -183,10 +184,10 @@ export const DoctorPatients: React.FC = () => {
                             onClick={() => handleChangePage(page - 1)}
                             disabled={page === 0}
                         >
-                            Previous
+                            {t('common.previous')}
                         </Button>
                         <span className="text-sm">
-              Page {page + 1} of {totalPages}
+              {t('common.pageOf', {page: page + 1, total: totalPages})}
             </span>
                         <Button
                             variant="outline"
@@ -194,7 +195,7 @@ export const DoctorPatients: React.FC = () => {
                             onClick={() => handleChangePage(page + 1)}
                             disabled={page >= totalPages - 1}
                         >
-                            Next
+                            {t('common.next')}
                         </Button>
                     </div>
                 </div>

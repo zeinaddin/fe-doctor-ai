@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Calendar, Clock, RefreshCw } from "lucide-react";
 import { addDays, format } from "date-fns";
 
@@ -20,6 +21,7 @@ const ACTIVE_STATUSES = new Set(["confirmed", "scheduled", "in_progress"]);
 
 export const DoctorAppointments: React.FC = () => {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
 
     const doctorId = user?.doctor_id || 0;
@@ -150,11 +152,11 @@ export const DoctorAppointments: React.FC = () => {
         return (
             <div className="space-y-4">
                 <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-                    Failed to load appointments. Please try again later.
+                    {t('doctorAppointments.failedToLoad')}
                 </div>
                 <Button onClick={handleRefresh} variant="outline">
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Retry
+                    {t('common.retry')}
                 </Button>
             </div>
         );
@@ -170,12 +172,12 @@ export const DoctorAppointments: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">My Appointments</h1>
-                    <p className="text-muted-foreground mt-1">View and manage your daily patient appointments</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('doctorAppointments.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('doctorAppointments.subtitle')}</p>
                 </div>
                 <Button onClick={handleRefresh} variant="outline" size="sm">
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Refresh
+                    {t('common.refresh')}
                 </Button>
             </div>
 
@@ -183,11 +185,11 @@ export const DoctorAppointments: React.FC = () => {
                 {/* Left card (unchanged) */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Select Date</CardTitle>
+                        <CardTitle>{t('doctorAppointments.selectDate')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="date">Date</Label>
+                            <Label htmlFor="date">{t('common.date')}</Label>
                             <Input
                                 id="date"
                                 type="date"
@@ -197,17 +199,17 @@ export const DoctorAppointments: React.FC = () => {
                         </div>
 
                         <div className="pt-4 border-t">
-                            <p className="text-sm text-muted-foreground mb-1">Selected Day</p>
+                            <p className="text-sm text-muted-foreground mb-1">{t('doctorAppointments.selectedDay')}</p>
                             <p className="text-lg font-semibold">{dayOfWeek}</p>
                             <p className="text-sm text-muted-foreground">{format(selectedDateObj, "MMMM dd, yyyy")}</p>
                         </div>
 
                         <div className="pt-4 border-t">
-                            <p className="text-sm text-muted-foreground mb-2">Statistics</p>
+                            <p className="text-sm text-muted-foreground mb-2">{t('doctorAppointments.statistics')}</p>
                             <div className="flex gap-2 flex-wrap">
-                                <Badge variant="default">{sortedAppointments.length} Total</Badge>
-                                <Badge className="bg-green-100 text-green-700 hover:bg-green-100">{activeCount} Active</Badge>
-                                <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">{doneCount} Done</Badge>
+                                <Badge variant="default">{sortedAppointments.length} {t('common.total')}</Badge>
+                                <Badge className="bg-green-100 text-green-700 hover:bg-green-100">{activeCount} {t('common.active')}</Badge>
+                                <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">{doneCount} {t('common.done')}</Badge>
                             </div>
                         </div>
                     </CardContent>
@@ -218,9 +220,9 @@ export const DoctorAppointments: React.FC = () => {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Calendar className="h-5 w-5" />
-                            Appointments for {format(selectedDateObj, "MMMM dd, yyyy")}
+                            {t('doctorAppointments.appointmentsFor', {date: format(selectedDateObj, "MMMM dd, yyyy")})}
                         </CardTitle>
-                        <CardDescription>Your patient appointments for the selected date</CardDescription>
+                        <CardDescription>{t('doctorAppointments.appointmentsForSelectedDate')}</CardDescription>
                     </CardHeader>
 
                     <CardContent>
@@ -242,7 +244,7 @@ export const DoctorAppointments: React.FC = () => {
 
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <p className="font-medium">{appointment.patient_name || "Unknown Patient"}</p>
+                                                <p className="font-medium">{appointment.patient_name || t('common.unknownPatient')}</p>
                                                 <Badge
                                                     variant={getStatusBadgeVariant(appointment.status) as any}
                                                     className={getStatusColor(appointment.status)}
@@ -255,19 +257,19 @@ export const DoctorAppointments: React.FC = () => {
                                                 <p className="text-sm text-muted-foreground">{appointment.patient_email}</p>
                                             )}
                                             {appointment.patient_phone && (
-                                                <p className="text-sm text-muted-foreground">Phone: {appointment.patient_phone}</p>
+                                                <p className="text-sm text-muted-foreground">{t('common.phone')}: {appointment.patient_phone}</p>
                                             )}
 
                                             {appointment.symptoms && (
                                                 <div className="mt-2 pt-2 border-t">
-                                                    <p className="text-sm font-medium">Symptoms:</p>
+                                                    <p className="text-sm font-medium">{t('common.symptoms')}:</p>
                                                     <p className="text-sm text-muted-foreground">{appointment.symptoms}</p>
                                                 </div>
                                             )}
 
                                             {appointment.notes && (
                                                 <div className="mt-1">
-                                                    <p className="text-sm font-medium">Notes:</p>
+                                                    <p className="text-sm font-medium">{t('common.notes')}:</p>
                                                     <p className="text-sm text-muted-foreground">{appointment.notes}</p>
                                                 </div>
                                             )}
@@ -279,14 +281,14 @@ export const DoctorAppointments: React.FC = () => {
                             // ✅ fallback: show upcoming
                             <div className="space-y-4">
                                 <div className="p-3 rounded-md border bg-accent/20">
-                                    <p className="font-medium">No appointments scheduled for this date.</p>
-                                    <p className="text-sm text-muted-foreground">Showing upcoming appointments instead.</p>
+                                    <p className="font-medium">{t('doctorAppointments.noAppointmentsForDate')}</p>
+                                    <p className="text-sm text-muted-foreground">{t('doctorAppointments.showingUpcoming')}</p>
                                 </div>
 
                                 {loadingUpcoming ? (
-                                    <p className="text-sm text-muted-foreground">Loading upcoming appointments...</p>
+                                    <p className="text-sm text-muted-foreground">{t('doctorAppointments.loadingUpcoming')}</p>
                                 ) : errorUpcoming ? (
-                                    <p className="text-sm text-destructive">Failed to load upcoming appointments.</p>
+                                    <p className="text-sm text-destructive">{t('doctorAppointments.failedToLoadUpcoming')}</p>
                                 ) : upcomingAppointments.length > 0 ? (
                                     <div className="space-y-3">
                                         {upcomingAppointments.map((appointment) => (
@@ -308,7 +310,7 @@ export const DoctorAppointments: React.FC = () => {
 
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 mb-1">
-                                                        <p className="font-medium">{appointment.patient_name || "Unknown Patient"}</p>
+                                                        <p className="font-medium">{appointment.patient_name || t('common.unknownPatient')}</p>
                                                         <Badge
                                                             variant={getStatusBadgeVariant(appointment.status) as any}
                                                             className={getStatusColor(appointment.status)}
@@ -325,19 +327,19 @@ export const DoctorAppointments: React.FC = () => {
                                                         <p className="text-sm text-muted-foreground">{appointment.patient_email}</p>
                                                     )}
                                                     {appointment.patient_phone && (
-                                                        <p className="text-sm text-muted-foreground">Phone: {appointment.patient_phone}</p>
+                                                        <p className="text-sm text-muted-foreground">{t('common.phone')}: {appointment.patient_phone}</p>
                                                     )}
 
                                                     {appointment.symptoms && (
                                                         <div className="mt-2 pt-2 border-t">
-                                                            <p className="text-sm font-medium">Symptoms:</p>
+                                                            <p className="text-sm font-medium">{t('common.symptoms')}:</p>
                                                             <p className="text-sm text-muted-foreground">{appointment.symptoms}</p>
                                                         </div>
                                                     )}
 
                                                     {appointment.notes && (
                                                         <div className="mt-1">
-                                                            <p className="text-sm font-medium">Notes:</p>
+                                                            <p className="text-sm font-medium">{t('common.notes')}:</p>
                                                             <p className="text-sm text-muted-foreground">{appointment.notes}</p>
                                                         </div>
                                                     )}
@@ -348,8 +350,8 @@ export const DoctorAppointments: React.FC = () => {
                                 ) : (
                                     <div className="text-center py-10 text-muted-foreground">
                                         <Calendar className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                                        <p className="font-medium">No upcoming appointments found</p>
-                                        <p className="text-sm mt-1">Nothing scheduled in the next {UPCOMING_DAYS_TO_CHECK} days.</p>
+                                        <p className="font-medium">{t('doctorAppointments.noUpcomingFound')}</p>
+                                        <p className="text-sm mt-1">{t('doctorAppointments.nothingScheduledDays', {days: UPCOMING_DAYS_TO_CHECK})}</p>
                                     </div>
                                 )}
                             </div>

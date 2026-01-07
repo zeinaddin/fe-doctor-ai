@@ -10,13 +10,13 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  Stethoscope,
   Users,
   X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import { PortalSwitcher } from '@/components/common/PortalSwitcher';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserNames } from '../types';
 import { cn } from '@/lib/utils';
@@ -58,6 +58,7 @@ export const DoctorLayout: React.FC = () => {
           <span className="font-bold text-gradient">{t('brand.name')}</span>
         </Link>
         <div className="flex items-center gap-2">
+          <PortalSwitcher />
           <LanguageSwitcher variant="dropdown" />
           <Button
             variant="ghost"
@@ -88,12 +89,9 @@ export const DoctorLayout: React.FC = () => {
             <LanguageSwitcher variant="dropdown" className="hidden lg:flex" />
           </div>
 
-          {/* Doctor badge */}
-          <div className="px-4 py-3 border-b border-gray-200/60">
-            <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-teal-50 text-teal-700 text-xs font-medium">
-              <Stethoscope className="h-3.5 w-3.5" />
-              {t('portal.doctor')}
-            </div>
+          {/* Portal switcher (desktop) */}
+          <div className="px-4 py-3 border-b border-gray-200/60 hidden lg:block">
+            <PortalSwitcher />
           </div>
 
           {/* Navigation */}

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Calendar, Clock, Phone, Mail, Plus} from 'lucide-react';
 import {format} from 'date-fns';
 import {Card, CardContent} from '@/components/ui/card';
@@ -13,6 +14,7 @@ import type {Appointment, AppointmentStatus, AppointmentFormData} from '../../ty
 export const PatientAppointments: React.FC = () => {
     const {user} = useAuth();
     const queryClient = useQueryClient();
+    const {t} = useTranslation();
     const [selectedFilter, setSelectedFilter] = useState<AppointmentStatus | 'ALL'>('ALL');
     const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
 
@@ -78,12 +80,12 @@ export const PatientAppointments: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">My Appointments</h1>
-                    <p className="text-muted-foreground mt-1">View and manage your medical appointments</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('patientAppointments.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('patientAppointments.subtitle')}</p>
                 </div>
                 <Button onClick={() => setBookingDialogOpen(true)}>
                     <Plus className="mr-2 h-4 w-4"/>
-                    Book Appointment
+                    {t('patientAppointments.bookAppointment')}
                 </Button>
             </div>
 
@@ -97,7 +99,7 @@ export const PatientAppointments: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-2xl font-bold">{appointments.length}</p>
-                                <p className="text-sm text-muted-foreground">Total</p>
+                                <p className="text-sm text-muted-foreground">{t('patientAppointments.total')}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -111,7 +113,7 @@ export const PatientAppointments: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-2xl font-bold">{upcomingAppointments.length}</p>
-                                <p className="text-sm text-muted-foreground">Upcoming</p>
+                                <p className="text-sm text-muted-foreground">{t('patientAppointments.upcoming')}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -127,7 +129,7 @@ export const PatientAppointments: React.FC = () => {
                                 <p className="text-2xl font-bold">
                                     {appointments.filter(a => a.status === 'completed').length}
                                 </p>
-                                <p className="text-sm text-muted-foreground">Completed</p>
+                                <p className="text-sm text-muted-foreground">{t('patientAppointments.completed')}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -143,7 +145,7 @@ export const PatientAppointments: React.FC = () => {
                                 <p className="text-2xl font-bold">
                                     {appointments.filter(a => a.status === 'cancelled').length}
                                 </p>
-                                <p className="text-sm text-muted-foreground">Cancelled</p>
+                                <p className="text-sm text-muted-foreground">{t('patientAppointments.cancelled')}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -157,35 +159,35 @@ export const PatientAppointments: React.FC = () => {
                     size="sm"
                     onClick={() => setSelectedFilter('ALL')}
                 >
-                    All
+                    {t('common.all')}
                 </Button>
                 <Button
                     variant={selectedFilter === 'confirmed' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setSelectedFilter('confirmed')}
                 >
-                    Confirmed
+                    {t('common.confirmed')}
                 </Button>
                 <Button
                     variant={selectedFilter === 'scheduled' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setSelectedFilter('scheduled')}
                 >
-                    Scheduled
+                    {t('common.scheduled')}
                 </Button>
                 <Button
                     variant={selectedFilter === 'completed' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setSelectedFilter('completed')}
                 >
-                    Completed
+                    {t('common.completed')}
                 </Button>
                 <Button
                     variant={selectedFilter === 'cancelled' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setSelectedFilter('cancelled')}
                 >
-                    Cancelled
+                    {t('common.cancelled')}
                 </Button>
             </div>
 
@@ -195,15 +197,15 @@ export const PatientAppointments: React.FC = () => {
                     <CardContent className="py-12">
                         <div className="text-center">
                             <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-20"/>
-                            <h3 className="text-lg font-semibold mb-2">No Appointments Found</h3>
+                            <h3 className="text-lg font-semibold mb-2">{t('patientAppointments.noAppointmentsFound')}</h3>
                             <p className="text-muted-foreground mb-4">
                                 {selectedFilter === 'ALL'
-                                    ? "You don't have any appointments yet. Book your first appointment to get started."
-                                    : `No ${selectedFilter.toLowerCase()} appointments.`}
+                                    ? t('patientAppointments.noAppointmentsYet')
+                                    : t('patientAppointments.noStatusAppointments', {status: selectedFilter})}
                             </p>
                             <Button onClick={() => setBookingDialogOpen(true)}>
                                 <Plus className="mr-2 h-4 w-4"/>
-                                Book Appointment
+                                {t('patientAppointments.bookAppointment')}
                             </Button>
                         </div>
                     </CardContent>
@@ -246,7 +248,7 @@ export const PatientAppointments: React.FC = () => {
                                         <>
                                             <div className="flex items-center gap-2 text-sm">
                                                 <Mail className="h-4 w-4 text-muted-foreground"/>
-                                                <span>Contact via clinic</span>
+                                                <span>{t('patientAppointments.contactViaClinic')}</span>
                                             </div>
                                             {appointment.patient_phone && (
                                                 <div className="flex items-center gap-2 text-sm">
@@ -260,7 +262,7 @@ export const PatientAppointments: React.FC = () => {
 
                                 {appointment.notes && (
                                     <div className="mt-4 pt-4 border-t">
-                                        <p className="text-sm font-medium mb-1">Notes:</p>
+                                        <p className="text-sm font-medium mb-1">{t('common.notes')}:</p>
                                         <p className="text-sm text-muted-foreground">{appointment.notes}</p>
                                     </div>
                                 )}
@@ -268,14 +270,14 @@ export const PatientAppointments: React.FC = () => {
                                 <div className="mt-4 flex gap-2">
                                     {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
                                         <>
-                                            <Button variant="outline" size="sm">Reschedule</Button>
+                                            <Button variant="outline" size="sm">{t('patientAppointments.reschedule')}</Button>
                                             <Button variant="outline" size="sm"
                                                     className="text-destructive hover:text-destructive">
-                                                Cancel
+                                                {t('patientAppointments.cancel')}
                                             </Button>
                                         </>
                                     )}
-                                    <Button variant="outline" size="sm">View Details</Button>
+                                    <Button variant="outline" size="sm">{t('common.viewDetails')}</Button>
                                 </div>
                             </CardContent>
                         </Card>

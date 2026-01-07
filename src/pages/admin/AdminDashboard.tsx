@@ -1,5 +1,6 @@
 import React from 'react';
 import {useQuery} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Users, Stethoscope, Calendar, CheckCircle, Clock, FileText} from 'lucide-react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {statsService} from '@/services/statsService.ts';
@@ -19,6 +20,7 @@ const StatCard = ({title, value, icon: Icon, trend}: { title: string; value: num
 );
 
 export const AdminDashboard: React.FC = () => {
+    const {t} = useTranslation();
     const {data: stats, isLoading} = useQuery<AdminDashboardStats>({
         queryKey: ['adminStats'],
         queryFn: () => statsService.getAdminStats(),
@@ -36,50 +38,50 @@ export const AdminDashboard: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                <p className="text-muted-foreground mt-1">Overview of your healthcare management system</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t('adminDashboard.title')}</h1>
+                <p className="text-muted-foreground mt-1">{t('adminDashboard.subtitle')}</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard
-                    title="Total Users"
+                    title={t('adminDashboard.totalUsers')}
                     value={stats?.totalUsers || 0}
                     icon={Users}
-                    trend="Active users in system"
+                    trend={t('adminDashboard.activeUsers')}
                 />
                 <StatCard
-                    title="Total Doctors"
+                    title={t('adminDashboard.totalDoctors')}
                     value={stats?.totalDoctors || 0}
                     icon={Stethoscope}
-                    trend="Available practitioners"
+                    trend={t('adminDashboard.availablePractitioners')}
                 />
                 <StatCard
-                    title="Today's Appointments"
+                    title={t('adminDashboard.todayAppointments')}
                     value={stats?.todayBookings || 0}
                     icon={Calendar}
-                    trend="Scheduled for today"
+                    trend={t('adminDashboard.scheduledForToday')}
                 />
                 <StatCard
-                    title="Total Bookings"
+                    title={t('adminDashboard.totalBookings')}
                     value={stats?.totalBookings || 0}
                     icon={Calendar}
-                    trend="All time appointments"
+                    trend={t('adminDashboard.allTimeAppointments')}
                 />
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
                 <StatCard
-                    title="Pending Bookings"
+                    title={t('adminDashboard.pendingBookings')}
                     value={stats?.pendingBookings || 0}
                     icon={Clock}
                 />
                 <StatCard
-                    title="Completed"
+                    title={t('adminDashboard.completed')}
                     value={stats?.completedBookings || 0}
                     icon={CheckCircle}
                 />
                 <StatCard
-                    title="Medical Records"
+                    title={t('adminDashboard.medicalRecords')}
                     value={stats?.totalEMRs || 0}
                     icon={FileText}
                 />
@@ -87,11 +89,10 @@ export const AdminDashboard: React.FC = () => {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
+                    <CardTitle>{t('adminDashboard.quickActions')}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
-                    Use the sidebar navigation to manage users, doctors, appointments, and access the AI symptom
-                    checker.
+                    {t('adminDashboard.sidebarInstructions')}
                 </CardContent>
             </Card>
         </div>

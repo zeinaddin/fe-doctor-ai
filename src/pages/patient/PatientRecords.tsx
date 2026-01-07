@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { FileText, Eye, Calendar, User, Activity, Pill } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import type { EMR } from '../../types';
 
 export const PatientRecords: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [selectedRecord, setSelectedRecord] = useState<EMR | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -46,8 +48,8 @@ export const PatientRecords: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Medical Records</h1>
-        <p className="text-muted-foreground mt-1">View your electronic health records and medical history</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('patientRecords.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('patientRecords.subtitle')}</p>
       </div>
 
       {/* Stats */}
@@ -60,7 +62,7 @@ export const PatientRecords: React.FC = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{records.length}</p>
-                <p className="text-sm text-muted-foreground">Total Records</p>
+                <p className="text-sm text-muted-foreground">{t('patientRecords.totalRecords')}</p>
               </div>
             </div>
           </CardContent>
@@ -76,7 +78,7 @@ export const PatientRecords: React.FC = () => {
                 <p className="text-2xl font-bold">
                   {records.filter(r => r.diagnosis).length}
                 </p>
-                <p className="text-sm text-muted-foreground">Diagnoses</p>
+                <p className="text-sm text-muted-foreground">{t('patientRecords.diagnoses')}</p>
               </div>
             </div>
           </CardContent>
@@ -92,7 +94,7 @@ export const PatientRecords: React.FC = () => {
                 <p className="text-2xl font-bold">
                   {records.filter(r => r.prescription && r.prescription.length > 0).length}
                 </p>
-                <p className="text-sm text-muted-foreground">Prescriptions</p>
+                <p className="text-sm text-muted-foreground">{t('patientRecords.prescriptions')}</p>
               </div>
             </div>
           </CardContent>
@@ -105,9 +107,9 @@ export const PatientRecords: React.FC = () => {
           <CardContent className="py-12">
             <div className="text-center">
               <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-20" />
-              <h3 className="text-lg font-semibold mb-2">No Medical Records Yet</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('patientRecords.noRecordsYet')}</h3>
               <p className="text-muted-foreground">
-                Your medical records from doctor visits will appear here.
+                {t('patientRecords.recordsWillAppear')}
               </p>
             </div>
           </CardContent>
@@ -133,9 +135,9 @@ export const PatientRecords: React.FC = () => {
                     </div>
                   </div>
                   {record.diagnosis ? (
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">Diagnosed</Badge>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">{t('patientRecords.diagnosed')}</Badge>
                   ) : (
-                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">In Progress</Badge>
+                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{t('patientRecords.inProgressStatus')}</Badge>
                   )}
                 </div>
 
@@ -146,14 +148,14 @@ export const PatientRecords: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span>Record ID: #{record.id}</span>
+                    <span>{t('patientRecords.recordId', { id: record.id })}</span>
                   </div>
                 </div>
 
                 {/* Diagnosis Preview */}
                 {record.diagnosis && (
                   <div className="mb-4">
-                    <p className="text-sm font-medium mb-1">Diagnosis:</p>
+                    <p className="text-sm font-medium mb-1">{t('patientRecords.diagnosis')}:</p>
                     <p className="text-sm text-muted-foreground line-clamp-2">{record.diagnosis}</p>
                   </div>
                 )}
@@ -163,7 +165,7 @@ export const PatientRecords: React.FC = () => {
                   <div className="mb-4">
                     <Badge variant="outline">
                       <Pill className="h-3 w-3 mr-1" />
-                      Prescription Available
+                      {t('patientRecords.prescriptionAvailable')}
                     </Badge>
                   </div>
                 )}
@@ -171,7 +173,7 @@ export const PatientRecords: React.FC = () => {
                 {/* Notes Preview */}
                 {record.notes && (
                   <div className="mb-4">
-                    <p className="text-sm font-medium mb-1">Notes:</p>
+                    <p className="text-sm font-medium mb-1">{t('common.notes')}:</p>
                     <p className="text-sm text-muted-foreground line-clamp-2">{record.notes}</p>
                   </div>
                 )}
@@ -182,7 +184,7 @@ export const PatientRecords: React.FC = () => {
                   onClick={() => handleViewRecord(record)}
                 >
                   <Eye className="mr-2 h-4 w-4" />
-                  View Full Record
+                  {t('patientRecords.viewFullRecord')}
                 </Button>
               </CardContent>
             </Card>
@@ -194,20 +196,20 @@ export const PatientRecords: React.FC = () => {
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Medical Record Details</DialogTitle>
+            <DialogTitle>{t('patientRecords.recordDetails')}</DialogTitle>
           </DialogHeader>
 
           {selectedRecord && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Date</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('common.date')}</p>
                   <p className="font-medium">{format(new Date(selectedRecord.created_at), 'MMMM dd, yyyy')}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Doctor</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('common.doctor')}</p>
                   <p className="font-medium">
-                    {selectedRecord.doctor_name ? `Dr. ${selectedRecord.doctor_name}` : 'Doctor'}
+                    {selectedRecord.doctor_name ? `Dr. ${selectedRecord.doctor_name}` : t('common.doctor')}
                   </p>
                   {selectedRecord.specialization_name && (
                     <p className="text-sm text-muted-foreground">
@@ -221,14 +223,14 @@ export const PatientRecords: React.FC = () => {
 
               {selectedRecord.diagnosis && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Diagnosis</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('patientRecords.diagnosis')}</p>
                   <p>{selectedRecord.diagnosis}</p>
                 </div>
               )}
 
               {selectedRecord.prescription && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Prescription</p>
+                  <p className="text-sm text-muted-foreground mb-2">{t('patientRecords.prescription')}</p>
                   <div className="p-3 rounded-lg border bg-accent/20">
                     <p className="text-sm whitespace-pre-wrap">{selectedRecord.prescription}</p>
                   </div>
@@ -237,7 +239,7 @@ export const PatientRecords: React.FC = () => {
 
               {selectedRecord.notes && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Doctor's Notes</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('patientRecords.doctorNotes')}</p>
                   <p className="whitespace-pre-wrap">{selectedRecord.notes}</p>
                 </div>
               )}
@@ -245,7 +247,7 @@ export const PatientRecords: React.FC = () => {
           )}
 
           <div className="flex justify-end pt-4">
-            <Button onClick={() => setOpenDialog(false)}>Close</Button>
+            <Button onClick={() => setOpenDialog(false)}>{t('common.close')}</Button>
           </div>
         </DialogContent>
       </Dialog>

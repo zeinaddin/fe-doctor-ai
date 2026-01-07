@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Stethoscope, CheckCircle, XCircle, Clock, AlertCircle} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -12,6 +13,7 @@ import {doctorService} from '@/services/doctorService.ts';
 import {specializationService} from '@/services/specializationService.ts';
 
 export const ApplyDoctor: React.FC = () => {
+    const {t} = useTranslation();
     const [formData, setFormData] = useState<DoctorFormData>({
         specialization_id: 0,
         license_number: '',
@@ -35,18 +37,18 @@ export const ApplyDoctor: React.FC = () => {
     const applyMutation = useMutation({
         mutationFn: (data: DoctorFormData) => doctorService.registerDoctor(data),
         onSuccess: () => {
-            alert('Your application has been submitted successfully! An admin will review it shortly.');
+            alert(t('applyDoctor.applicationSubmitted'));
             window.location.reload();
         },
         onError: (error: any) => {
-            alert(error.response?.data?.detail || 'Failed to submit application. Please try again.');
+            alert(error.response?.data?.detail || t('errors.failedToSave'));
         },
     });
 
     const withdrawMutation = useMutation({
         mutationFn: () => doctorService.withdrawDoctorApplication(),
         onSuccess: () => {
-            alert('Your application has been withdrawn.');
+            alert(t('applyDoctor.applicationWithdrawn'));
             window.location.reload();
         },
     });
@@ -72,25 +74,25 @@ export const ApplyDoctor: React.FC = () => {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Doctor Status</h1>
-                    <p className="text-muted-foreground mt-1">You are registered as a doctor</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('applyDoctor.doctorStatus')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('applyDoctor.registeredAsDoctor')}</p>
                 </div>
 
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <CheckCircle className="h-6 w-6 text-green-600"/>
-                            Application Approved
+                            {t('applyDoctor.applicationApproved')}
                         </CardTitle>
                         <CardDescription>
-                            Your doctor application has been approved. You can now manage your schedule and patients.
+                            {t('applyDoctor.applicationApprovedDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
                             <div>
-                                <p className="text-sm text-muted-foreground">Status</p>
-                                <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>
+                                <p className="text-sm text-muted-foreground">{t('common.status')}</p>
+                                <Badge variant="secondary" className="bg-green-100 text-green-800">{t('applyDoctor.activeStatus')}</Badge>
                             </div>
                         </div>
                     </CardContent>
@@ -104,25 +106,24 @@ export const ApplyDoctor: React.FC = () => {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Doctor Application</h1>
-                    <p className="text-muted-foreground mt-1">Your application is under review</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('applyDoctor.doctorApplication')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('applyDoctor.applicationUnderReview')}</p>
                 </div>
 
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Clock className="h-6 w-6 text-yellow-600"/>
-                            Application Pending
+                            {t('applyDoctor.applicationPending')}
                         </CardTitle>
                         <CardDescription>
-                            Your application is being reviewed by an administrator. You will be notified once a decision
-                            has been made.
+                            {t('applyDoctor.applicationPendingDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Button variant="destructive" onClick={() => withdrawMutation.mutate()}>
                             <XCircle className="h-4 w-4 mr-2"/>
-                            Withdraw Application
+                            {t('applyDoctor.withdrawApplication')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -134,9 +135,9 @@ export const ApplyDoctor: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Apply to be a Doctor</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t('applyDoctor.applyToBeDoctor')}</h1>
                 <p className="text-muted-foreground mt-1">
-                    Submit your credentials to become a healthcare provider on our platform
+                    {t('applyDoctor.submitCredentials')}
                 </p>
             </div>
 
@@ -144,10 +145,9 @@ export const ApplyDoctor: React.FC = () => {
                 <div className="flex gap-3">
                     <AlertCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5"/>
                     <div>
-                        <p className="text-sm text-blue-800 font-medium">Application Requirements</p>
+                        <p className="text-sm text-blue-800 font-medium">{t('applyDoctor.applicationRequirements')}</p>
                         <p className="text-sm text-blue-700 mt-1">
-                            Please ensure all information is accurate. Your application will be reviewed by an
-                            administrator before approval.
+                            {t('applyDoctor.requirementsNote')}
                         </p>
                     </div>
                 </div>
@@ -157,16 +157,16 @@ export const ApplyDoctor: React.FC = () => {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Stethoscope className="h-5 w-5"/>
-                        Doctor Application Form
+                        {t('applyDoctor.applicationForm')}
                     </CardTitle>
                     <CardDescription>
-                        Fill in your professional credentials and qualifications
+                        {t('applyDoctor.fillCredentials')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <Label htmlFor="specialty">Medical Specialty *</Label>
+                            <Label htmlFor="specialty">{t('applyDoctor.medicalSpecialty')}</Label>
                             <select
                                 id="specialty"
                                 value={formData.specialization_id || 0}
@@ -176,7 +176,7 @@ export const ApplyDoctor: React.FC = () => {
                                 disabled={isLoadingSpecializations}
                             >
                                 <option value={0} disabled>
-                                    {isLoadingSpecializations ? 'Loading specializations...' : 'Select a specialty...'}
+                                    {isLoadingSpecializations ? t('applyDoctor.loadingSpecializations') : t('applyDoctor.selectSpecialty')}
                                 </option>
 
                                 {specializations.map((spec) => (
@@ -187,24 +187,24 @@ export const ApplyDoctor: React.FC = () => {
                             </select>
                             {specializations.length === 0 && !isLoadingSpecializations && (
                                 <p className="text-xs text-destructive">
-                                    No specializations available. Please contact an administrator.
+                                    {t('applyDoctor.noSpecializations')}
                                 </p>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="licenseNumber">Medical License Number *</Label>
+                            <Label htmlFor="licenseNumber">{t('applyDoctor.licenseNumber')}</Label>
                             <Input
                                 id="licenseNumber"
                                 value={formData.license_number}
                                 onChange={(e) => handleChange('license_number', e.target.value)}
-                                placeholder="e.g., MD123456"
+                                placeholder={t('applyDoctor.licensePlaceholder')}
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="yearsOfExperience">Years of Experience *</Label>
+                            <Label htmlFor="yearsOfExperience">{t('applyDoctor.yearsOfExperience')}</Label>
                             <Input
                                 id="yearsOfExperience"
                                 type="number"
@@ -218,16 +218,17 @@ export const ApplyDoctor: React.FC = () => {
 
 
                         <div className="space-y-2">
-                            <Label htmlFor="bio">Professional Bio (Optional)</Label>
+                            <Label htmlFor="bio">{t('applyDoctor.professionalBio')}</Label>
                             <textarea
                                 id="bio"
                                 value={formData.bio}
+                                required
                                 onChange={(e) => handleChange('bio', e.target.value)}
                                 className="w-full min-h-[120px] px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                placeholder="Tell patients about yourself, your approach to healthcare, and areas of expertise..."
+                                placeholder={t('applyDoctor.bioPlaceholder')}
                             />
                             <p className="text-xs text-muted-foreground">
-                                This will be visible to patients when they search for doctors
+                                {t('applyDoctor.bioVisibleNote')}
                             </p>
                         </div>
 
@@ -235,7 +236,7 @@ export const ApplyDoctor: React.FC = () => {
 
                         <div className="flex gap-3">
                             <Button type="submit" disabled={applyMutation.isPending} className="flex-1">
-                                {applyMutation.isPending ? 'Submitting...' : 'Submit Application'}
+                                {applyMutation.isPending ? t('applyDoctor.submitting') : t('applyDoctor.submitApplication')}
                             </Button>
                         </div>
                     </form>

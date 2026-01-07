@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Search, Stethoscope, Star, Calendar} from 'lucide-react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
@@ -18,6 +19,7 @@ import {useAuth} from '../../contexts/AuthContext';
 export const PatientFindDoctors: React.FC = () => {
     const {user} = useAuth();
     const queryClient = useQueryClient();
+    const {t} = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSpecialty, setSelectedSpecialty] = useState<string>('ALL');
     const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
@@ -46,10 +48,10 @@ export const PatientFindDoctors: React.FC = () => {
             setBookingDateTime('');
             setBookingNotes('');
             setSelectedDoctor(null);
-            alert('Appointment booked successfully!');
+            alert(t('patientFindDoctors.bookingSuccess'));
         },
         onError: (error) => {
-            alert('Failed to book appointment. Please try again.');
+            alert(t('patientFindDoctors.bookingFailed'));
             console.error('Booking error:', error);
         },
     });
@@ -61,7 +63,7 @@ export const PatientFindDoctors: React.FC = () => {
 
     const handleSubmitBooking = () => {
         if (!selectedDoctor || !bookingDateTime || !user) {
-            alert('Please fill in all required fields');
+            alert(t('patientFindDoctors.fillAllFields'));
             return;
         }
 
@@ -93,9 +95,8 @@ export const PatientFindDoctors: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Find Doctors</h1>
-                <p className="text-muted-foreground mt-1">Search and book appointments with qualified healthcare
-                    providers</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t('patientFindDoctors.title')}</h1>
+                <p className="text-muted-foreground mt-1">{t('patientFindDoctors.subtitle')}</p>
             </div>
 
             {/* Search and Filter */}
@@ -103,7 +104,7 @@ export const PatientFindDoctors: React.FC = () => {
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                     <Input
-                        placeholder="Search by name, specialty, or keywords..."
+                        placeholder={t('placeholders.searchByName')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -114,7 +115,7 @@ export const PatientFindDoctors: React.FC = () => {
                     onChange={(e) => setSelectedSpecialty(e.target.value)}
                     className="w-full md:w-64 h-10 px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
-                    <option value="ALL">All Specialties</option>
+                    <option value="ALL">{t('patientFindDoctors.allSpecialties')}</option>
                     {specializations.map((spec) => (
                         <option key={spec.id} value={spec.title}>
                             {spec.title}
@@ -125,7 +126,7 @@ export const PatientFindDoctors: React.FC = () => {
 
             {/* Results Count */}
             <div className="text-sm text-muted-foreground">
-                Found {filteredDoctors.length} {filteredDoctors.length === 1 ? 'doctor' : 'doctors'}
+                {t('patientFindDoctors.foundDoctors', {count: filteredDoctors.length})}
             </div>
 
             {/* Doctors Grid */}
@@ -134,11 +135,11 @@ export const PatientFindDoctors: React.FC = () => {
                     <CardContent className="py-12">
                         <div className="text-center">
                             <Stethoscope className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-20"/>
-                            <h3 className="text-lg font-semibold mb-2">No Doctors Found</h3>
+                            <h3 className="text-lg font-semibold mb-2">{t('patientFindDoctors.noDoctorsFound')}</h3>
                             <p className="text-muted-foreground">
                                 {searchQuery || selectedSpecialty !== 'ALL'
-                                    ? 'Try adjusting your search or filters.'
-                                    : 'There are no available doctors at the moment.'}
+                                    ? t('patientFindDoctors.tryAdjustingFilters')
+                                    : t('patientFindDoctors.noAvailableDoctors')}
                             </p>
                         </div>
                     </CardContent>
@@ -175,13 +176,13 @@ export const PatientFindDoctors: React.FC = () => {
                                 {/* Experience */}
                                 <div className="flex items-center gap-2 text-sm">
                                     <Stethoscope className="h-4 w-4 text-muted-foreground"/>
-                                    <span>{doctor.experience_years} years experience</span>
+                                    <span>{t('patientFindDoctors.yearsExperience', {years: doctor.experience_years})}</span>
                                 </div>
 
                                 {/* Bio */}
                                 {doctor.bio && (
                                     <div>
-                                        <p className="text-sm font-medium mb-1">About</p>
+                                        <p className="text-sm font-medium mb-1">{t('patientFindDoctors.about')}</p>
                                         <p className="text-sm text-muted-foreground line-clamp-3">{doctor.bio}</p>
                                     </div>
                                 )}
@@ -189,7 +190,7 @@ export const PatientFindDoctors: React.FC = () => {
                                 {/* License */}
                                 <div className="pt-3 border-t">
                                     <p className="text-xs text-muted-foreground">
-                                        License: {doctor.license_number}
+                                        {t('patientFindDoctors.license')}: {doctor.license_number}
                                     </p>
                                 </div>
 
@@ -200,7 +201,7 @@ export const PatientFindDoctors: React.FC = () => {
                                         disabled={doctor.status !== 'approved'}
                                     >
                                         <Calendar className="mr-2 h-4 w-4"/>
-                                        Book Appointment
+                                        {t('patientFindDoctors.bookAppointmentBtn')}
                                     </Button>
                                     <Button variant="outline" size="icon">
                                         <Search className="h-4 w-4"/>
@@ -216,8 +217,7 @@ export const PatientFindDoctors: React.FC = () => {
             {filteredDoctors.length > 0 && (
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                     <p className="text-sm text-blue-800">
-                        <strong>Note:</strong> All listed doctors are verified healthcare professionals. Click "Book
-                        Appointment" to schedule a consultation.
+                        {t('patientFindDoctors.verifiedNote')}
                     </p>
                 </div>
             )}
@@ -226,7 +226,7 @@ export const PatientFindDoctors: React.FC = () => {
             <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
                 <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
-                        <DialogTitle>Book Appointment</DialogTitle>
+                        <DialogTitle>{t('patientAppointments.bookAppointment')}</DialogTitle>
                     </DialogHeader>
                     {selectedDoctor && (
                         <div className="space-y-4">
@@ -243,7 +243,7 @@ export const PatientFindDoctors: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="datetime">Appointment Date & Time *</Label>
+                                <Label htmlFor="datetime">{t('patientFindDoctors.appointmentDateTime')}</Label>
                                 <Input
                                     id="datetime"
                                     type="datetime-local"
@@ -255,10 +255,10 @@ export const PatientFindDoctors: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="notes">Notes (Optional)</Label>
+                                <Label htmlFor="notes">{t('patientFindDoctors.notesOptional')}</Label>
                                 <Textarea
                                     id="notes"
-                                    placeholder="Any specific concerns or symptoms..."
+                                    placeholder={t('placeholders.anySymptoms')}
                                     value={bookingNotes}
                                     onChange={(e) => setBookingNotes(e.target.value)}
                                     rows={3}
@@ -272,14 +272,14 @@ export const PatientFindDoctors: React.FC = () => {
                                     onClick={() => setBookingDialogOpen(false)}
                                     disabled={bookingMutation.isPending}
                                 >
-                                    Cancel
+                                    {t('common.cancel')}
                                 </Button>
                                 <Button
                                     className="flex-1"
                                     onClick={handleSubmitBooking}
                                     disabled={bookingMutation.isPending || !bookingDateTime}
                                 >
-                                    {bookingMutation.isPending ? 'Booking...' : 'Confirm Booking'}
+                                    {bookingMutation.isPending ? t('patientFindDoctors.booking') : t('patientFindDoctors.confirmBooking')}
                                 </Button>
                             </div>
                         </div>

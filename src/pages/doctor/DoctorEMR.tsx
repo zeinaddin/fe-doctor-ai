@@ -1,5 +1,6 @@
 import React, {useMemo, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
+import {useTranslation} from "react-i18next";
 import {Eye, FileText} from "lucide-react";
 import {format} from "date-fns";
 
@@ -49,6 +50,7 @@ function parsePrescription(value: any): any[] | string | null {
 
 
 export const DoctorEMR: React.FC = () => {
+    const {t} = useTranslation();
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(10);
 
@@ -103,7 +105,7 @@ export const DoctorEMR: React.FC = () => {
     if (error) {
         return (
             <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-                Failed to load EMR records. Please try again later.
+                {t('doctorEMR.failedToLoad')}
             </div>
         );
     }
@@ -111,22 +113,22 @@ export const DoctorEMR: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Electronic Medical Records</h1>
-                <p className="text-muted-foreground mt-1">View and manage patient medical records</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t('doctorEMR.title')}</h1>
+                <p className="text-muted-foreground mt-1">{t('doctorEMR.subtitle')}</p>
             </div>
 
             <Card>
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Patient</TableHead>
-                            <TableHead>Doctor</TableHead>
-                            <TableHead>Specialization</TableHead>
-                            <TableHead>Chief Complaint</TableHead>
-                            <TableHead>Diagnosis</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.id')}</TableHead>
+                            <TableHead>{t('common.patient')}</TableHead>
+                            <TableHead>{t('common.doctor')}</TableHead>
+                            <TableHead>{t('common.specialization')}</TableHead>
+                            <TableHead>{t('doctorEMR.chiefComplaint')}</TableHead>
+                            <TableHead>{t('common.diagnosis')}</TableHead>
+                            <TableHead>{t('common.date')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -158,9 +160,9 @@ export const DoctorEMR: React.FC = () => {
 
                                     <TableCell>
                                         {emr.diagnosis ? (
-                                            <Badge variant="success">Diagnosed</Badge>
+                                            <Badge variant="success">{t('common.diagnosed')}</Badge>
                                         ) : (
-                                            <Badge variant="warning">Pending</Badge>
+                                            <Badge variant="warning">{t('common.pending')}</Badge>
                                         )}
                                         {emr.diagnosis ? (
                                             <div className="text-xs text-muted-foreground mt-1 max-w-[260px] truncate">
@@ -174,7 +176,7 @@ export const DoctorEMR: React.FC = () => {
                                     </TableCell>
 
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="icon" title="View details"
+                                        <Button variant="ghost" size="icon" title={t('common.viewDetails')}
                                                 onClick={() => handleViewEMR(emr)}>
                                             <Eye className="h-4 w-4"/>
                                         </Button>
@@ -185,7 +187,7 @@ export const DoctorEMR: React.FC = () => {
                             <TableRow>
                                 <TableCell colSpan={8} className="text-center py-12">
                                     <FileText className="h-12 w-12 mx-auto mb-3 opacity-20 text-muted-foreground"/>
-                                    <p className="text-muted-foreground">No records found</p>
+                                    <p className="text-muted-foreground">{t('doctorEMR.noRecordsFound')}</p>
                                 </TableCell>
                             </TableRow>
                         )}
@@ -196,21 +198,21 @@ export const DoctorEMR: React.FC = () => {
             {total > 0 && (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
-                        Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, total)} of {total} records
+                        {t('common.showingRange', {from: page * rowsPerPage + 1, to: Math.min((page + 1) * rowsPerPage, total), total})} {t('doctorEMR.records')}
                     </p>
 
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" onClick={() => setPage((p) => p - 1)} disabled={page === 0}>
-                            Previous
+                            {t('common.previous')}
                         </Button>
-                        <span className="text-sm">Page {page + 1} of {totalPages}</span>
+                        <span className="text-sm">{t('common.pageOf', {page: page + 1, total: totalPages})}</span>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setPage((p) => p + 1)}
                             disabled={page >= totalPages - 1}
                         >
-                            Next
+                            {t('common.next')}
                         </Button>
                     </div>
                 </div>
@@ -225,7 +227,7 @@ export const DoctorEMR: React.FC = () => {
             >
                 <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Medical Record Details</DialogTitle>
+                        <DialogTitle>{t('doctorEMR.recordDetails')}</DialogTitle>
                     </DialogHeader>
 
                     {selectedEMR && (
@@ -233,7 +235,7 @@ export const DoctorEMR: React.FC = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 {/* PATIENT BLOCK (user by patient_id) */}
                                 <div>
-                                    <p className="text-sm text-muted-foreground mb-1">Patient</p>
+                                    <p className="text-sm text-muted-foreground mb-1">{t('common.patient')}</p>
                                     <p className="font-medium">
                                         {patientQuery.data?.full_name ?? selectedEMR.patient_name ?? `#${selectedEMR.patient_id ?? "—"}`}
                                     </p>
@@ -244,7 +246,7 @@ export const DoctorEMR: React.FC = () => {
 
                                 {/* DOCTOR BLOCK (doctor by doctor_id) */}
                                 <div>
-                                    <p className="text-sm text-muted-foreground mb-1">Doctor</p>
+                                    <p className="text-sm text-muted-foreground mb-1">{t('common.doctor')}</p>
                                     <p className="font-medium">
                                         Dr. {doctorQuery.data?.full_name ?? selectedEMR.doctor_name ?? `#${selectedEMR.doctor_id ?? "—"}`}
                                     </p>
@@ -257,13 +259,13 @@ export const DoctorEMR: React.FC = () => {
                             <Separator/>
 
                             <div>
-                                <p className="text-sm text-muted-foreground mb-1">Chief Complaint</p>
+                                <p className="text-sm text-muted-foreground mb-1">{t('doctorEMR.chiefComplaint')}</p>
                                 <p>{(selectedEMR as any).chiefComplaint ?? selectedEMR.notes ?? "—"}</p>
                             </div>
 
                             {selectedEMR.diagnosis && (
                                 <div>
-                                    <p className="text-sm text-muted-foreground mb-1">Diagnosis</p>
+                                    <p className="text-sm text-muted-foreground mb-1">{t('common.diagnosis')}</p>
                                     <p>{selectedEMR.diagnosis}</p>
                                 </div>
                             )}
@@ -272,22 +274,22 @@ export const DoctorEMR: React.FC = () => {
                                 const parsed = parsePrescription(selectedEMR.prescription);
                                 if (!parsed) return null;
 
-                                // If it’s an array of prescriptions
+                                // If it's an array of prescriptions
                                 if (Array.isArray(parsed)) {
                                     return (
                                         <div>
-                                            <p className="text-sm text-muted-foreground mb-2">Prescriptions</p>
+                                            <p className="text-sm text-muted-foreground mb-2">{t('doctorEMR.prescriptions')}</p>
                                             <div className="space-y-2">
                                                 {parsed.map((rx: any, index: number) => (
                                                     <div key={index} className="p-3 rounded-lg border bg-accent/20">
-                                                        <p className="font-medium text-sm">{rx.medicationName ?? rx.name ?? `Medication #${index + 1}`}</p>
+                                                        <p className="font-medium text-sm">{rx.medicationName ?? rx.name ?? `${t('doctorEMR.medication')} #${index + 1}`}</p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {rx.dosage ? `Dosage: ${rx.dosage}` : null}
-                                                            {rx.frequency ? ` | Frequency: ${rx.frequency}` : null}
-                                                            {rx.duration ? ` | Duration: ${rx.duration}` : null}
+                                                            {rx.dosage ? `${t('doctorEMR.dosage')}: ${rx.dosage}` : null}
+                                                            {rx.frequency ? ` | ${t('doctorEMR.frequency')}: ${rx.frequency}` : null}
+                                                            {rx.duration ? ` | ${t('doctorEMR.duration')}: ${rx.duration}` : null}
                                                         </p>
                                                         {rx.instructions ? (
-                                                            <p className="text-sm text-muted-foreground mt-1">Instructions: {rx.instructions}</p>
+                                                            <p className="text-sm text-muted-foreground mt-1">{t('doctorEMR.instructions')}: {rx.instructions}</p>
                                                         ) : null}
                                                     </div>
                                                 ))}
@@ -299,7 +301,7 @@ export const DoctorEMR: React.FC = () => {
                                 // Otherwise show as plain text
                                 return (
                                     <div>
-                                        <p className="text-sm text-muted-foreground mb-1">Prescription</p>
+                                        <p className="text-sm text-muted-foreground mb-1">{t('doctorEMR.prescription')}</p>
                                         <p className="whitespace-pre-wrap">{String(parsed)}</p>
                                     </div>
                                 );
@@ -308,14 +310,14 @@ export const DoctorEMR: React.FC = () => {
                             {/* Optional extras (only if your EMR type actually has them) */}
                             {(selectedEMR as any).medicalHistory ? (
                                 <div>
-                                    <p className="text-sm text-muted-foreground mb-1">Medical History</p>
+                                    <p className="text-sm text-muted-foreground mb-1">{t('doctorEMR.medicalHistory')}</p>
                                     <p>{(selectedEMR as any).medicalHistory}</p>
                                 </div>
                             ) : null}
 
                             {(selectedEMR as any).vitalSigns ? (
                                 <div>
-                                    <p className="text-sm text-muted-foreground mb-2">Vital Signs</p>
+                                    <p className="text-sm text-muted-foreground mb-2">{t('doctorEMR.vitalSigns')}</p>
                                     <pre className="text-sm p-3 rounded bg-accent/20 overflow-x-auto">
                     {JSON.stringify((selectedEMR as any).vitalSigns, null, 2)}
                   </pre>
@@ -325,7 +327,7 @@ export const DoctorEMR: React.FC = () => {
                     )}
 
                     <div className="flex justify-end pt-4">
-                        <Button onClick={handleCloseDialog}>Close</Button>
+                        <Button onClick={handleCloseDialog}>{t('common.close')}</Button>
                     </div>
                 </DialogContent>
             </Dialog>

@@ -16,10 +16,49 @@ export interface User {
     doctor_id?: number;
 }
 
+/**
+ * Get the primary role for the user (highest priority role)
+ */
 export const getUserRole = (user: User): UserRole => {
     if (user.is_admin) return UserRole.ADMIN;
     if (user.is_doctor) return UserRole.DOCTOR;
     return UserRole.PATIENT;
+};
+
+/**
+ * Get all roles/portals the user can access
+ * - Admin can access: ADMIN + DOCTOR (if is_doctor) + PATIENT
+ * - Doctor can access: DOCTOR + PATIENT
+ * - Patient can access: PATIENT only
+ */
+export const getUserAccessibleRoles = (user: User): UserRole[] => {
+    const roles: UserRole[] = [UserRole.PATIENT]; // Everyone can access patient portal
+
+    if (user.is_doctor) {
+        roles.unshift(UserRole.DOCTOR); // Add doctor portal access
+    }
+
+    if (user.is_admin) {
+        roles.unshift(UserRole.ADMIN); // Add admin portal access at the start
+    }
+
+    return roles;
+};
+
+/**
+ * Check if user can access a specific portal
+ */
+export const canAccessPortal = (user: User, role: UserRole): boolean => {
+    return getUserAccessibleRoles(user).includes(role);
+};
+
+/**
+ * Get the default/highest priority portal for the user after login
+ */
+export const getDefaultPortalPath = (user: User): string => {
+    if (user.is_admin) return '/admin/dashboard';
+    if (user.is_doctor) return '/doctor/dashboard';
+    return '/patient/dashboard';
 };
 
 export const getUserNames = (user: User) => {

@@ -3,6 +3,7 @@
 import type React from "react"
 import {useState} from "react"
 import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query"
+import {useTranslation} from "react-i18next"
 import {Plus, Search, Edit, Trash2, Star, Eye} from "lucide-react"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
@@ -15,6 +16,7 @@ import {doctorService} from "@/services/doctorService.ts"
 import type {Doctor, PaginatedResponse} from "@/types"
 
 export const Doctors: React.FC = () => {
+    const {t} = useTranslation()
     const [searchQuery, setSearchQuery] = useState("")
     const [page] = useState(0)
     const rowsPerPage = 10
@@ -52,12 +54,12 @@ export const Doctors: React.FC = () => {
     }
 
     const handleDeleteDoctor = async (doctorId: number) => {
-        if (window.confirm("Are you sure you want to delete this doctor?")) {
+        if (window.confirm(t('adminDoctors.confirmDelete'))) {
             try {
                 await deleteDoctorMutation.mutateAsync(doctorId)
             } catch (error) {
                 console.error("Failed to delete doctor:", error)
-                alert("Failed to delete doctor. Please try again.")
+                alert(t('adminDoctors.deleteFailed'))
             }
         }
     }
@@ -98,12 +100,12 @@ export const Doctors: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Doctors</h1>
-                    <p className="text-muted-foreground mt-1">Manage healthcare providers</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('adminDoctors.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('adminDoctors.subtitle')}</p>
                 </div>
                 <Button onClick={handleCreateDoctor}>
                     <Plus className="mr-2 h-4 w-4"/>
-                    Register Doctor
+                    {t('adminDoctors.registerDoctor')}
                 </Button>
             </div>
 
@@ -111,7 +113,7 @@ export const Doctors: React.FC = () => {
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                     <Input
-                        placeholder="Search doctors..."
+                        placeholder={t('placeholders.searchDoctors')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -123,13 +125,13 @@ export const Doctors: React.FC = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Specialty</TableHead>
-                            <TableHead>License</TableHead>
-                            <TableHead>Experience</TableHead>
-                            <TableHead>Rating</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.name')}</TableHead>
+                            <TableHead>{t('adminDoctors.specialty')}</TableHead>
+                            <TableHead>{t('adminDoctors.license')}</TableHead>
+                            <TableHead>{t('adminDoctors.experience')}</TableHead>
+                            <TableHead>{t('common.rating')}</TableHead>
+                            <TableHead>{t('common.status')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -145,7 +147,7 @@ export const Doctors: React.FC = () => {
                         ) : filteredDoctors?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                                    No doctors found
+                                    {t('adminDoctors.noDoctors')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -201,8 +203,8 @@ export const Doctors: React.FC = () => {
             <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle className="text-xl">Doctor Details</DialogTitle>
-                        <DialogDescription>Full information about the doctor</DialogDescription>
+                        <DialogTitle className="text-xl">{t('adminDoctors.doctorDetails')}</DialogTitle>
+                        <DialogDescription>{t('adminDoctors.fullInformation')}</DialogDescription>
                     </DialogHeader>
                     {previewDoctor && (
                         <div className="space-y-6">
@@ -217,46 +219,46 @@ export const Doctors: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Email</p>
-                                    <p className="font-medium">{previewDoctor.email || "N/A"}</p>
+                                    <p className="text-sm text-muted-foreground">{t('adminDoctors.email')}</p>
+                                    <p className="font-medium">{previewDoctor.email || t('common.na')}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Phone</p>
-                                    <p className="font-medium">{previewDoctor.phone || "N/A"}</p>
+                                    <p className="text-sm text-muted-foreground">{t('common.phone')}</p>
+                                    <p className="font-medium">{previewDoctor.phone || t('common.na')}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">License Number</p>
+                                    <p className="text-sm text-muted-foreground">{t('adminDoctors.license')}</p>
                                     <p className="font-medium">{previewDoctor.license_number}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Experience</p>
-                                    <p className="font-medium">{previewDoctor.experience_years} years</p>
+                                    <p className="text-sm text-muted-foreground">{t('adminDoctors.experience')}</p>
+                                    <p className="font-medium">{previewDoctor.experience_years} {t('common.years')}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Rating</p>
+                                    <p className="text-sm text-muted-foreground">{t('common.rating')}</p>
                                     <div className="flex items-center gap-1">
                                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400"/>
-                                        <span className="font-medium">{previewDoctor.rating?.toFixed(1) || "N/A"}</span>
+                                        <span className="font-medium">{previewDoctor.rating?.toFixed(1) || t('common.na')}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Registered On</p>
+                                    <p className="text-sm text-muted-foreground">{t('adminDoctors.registeredOn')}</p>
                                     <p className="font-medium">{new Date(previewDoctor.created_at).toLocaleDateString()}</p>
                                 </div>
                             </div>
 
                             {/* Bio section */}
                             <div className="space-y-2">
-                                <p className="text-sm text-muted-foreground">Bio</p>
+                                <p className="text-sm text-muted-foreground">{t('adminDoctors.bio')}</p>
                                 <p className="text-sm leading-relaxed bg-muted/50 p-3 rounded-md">
-                                    {previewDoctor.bio || "No bio available"}
+                                    {previewDoctor.bio || t('adminDoctors.noBio')}
                                 </p>
                             </div>
 
                             {/* Rejection reason if rejected */}
                             {previewDoctor.status === "rejected" && previewDoctor.rejection_reason && (
                                 <div className="space-y-2">
-                                    <p className="text-sm text-muted-foreground">Rejection Reason</p>
+                                    <p className="text-sm text-muted-foreground">{t('adminDoctors.rejectionReason')}</p>
                                     <p className="text-sm leading-relaxed bg-red-50 text-red-800 p-3 rounded-md">
                                         {previewDoctor.rejection_reason}
                                     </p>
@@ -266,15 +268,15 @@ export const Doctors: React.FC = () => {
                             {/* IDs section */}
                             <div className="grid grid-cols-3 gap-4 pt-4 border-t text-xs text-muted-foreground">
                                 <div>
-                                    <span>Doctor ID: </span>
+                                    <span>{t('adminDoctors.doctorId')}: </span>
                                     <span className="font-mono">{previewDoctor.id}</span>
                                 </div>
                                 <div>
-                                    <span>User ID: </span>
+                                    <span>{t('adminDoctors.userId')}: </span>
                                     <span className="font-mono">{previewDoctor.user_id}</span>
                                 </div>
                                 <div>
-                                    <span>Specialization ID: </span>
+                                    <span>{t('adminDoctors.specializationId')}: </span>
                                     <span className="font-mono">{previewDoctor.specialization_id}</span>
                                 </div>
                             </div>

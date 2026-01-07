@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Plus, Search, Edit, Trash2, Users} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -11,6 +12,7 @@ import {specializationService} from '@/services/specializationService.ts';
 import type {Specialization, SpecializationFormData} from '@/types';
 
 export const Specializations: React.FC = () => {
+    const {t} = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const queryClient = useQueryClient();
 
@@ -62,12 +64,12 @@ export const Specializations: React.FC = () => {
     };
 
     const handleDelete = async (id: number, name: string) => {
-        if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+        if (window.confirm(t('adminSpecializations.confirmDelete', {name}))) {
             try {
                 await deleteMutation.mutateAsync(id);
             } catch (error) {
                 console.error('Failed to delete specialization:', error);
-                alert('Failed to delete specialization. Please try again.');
+                alert(t('adminSpecializations.deleteFailed'));
             }
         }
     };
@@ -81,7 +83,7 @@ export const Specializations: React.FC = () => {
             }
         } catch (error) {
             console.error('Failed to save specialization:', error);
-            alert('Failed to save specialization. Please try again.');
+            alert(t('adminSpecializations.saveFailed'));
         }
     };
 
@@ -94,12 +96,12 @@ export const Specializations: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Medical Specializations</h1>
-                    <p className="text-muted-foreground mt-1">Manage medical specialties and departments</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('adminSpecializations.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('adminSpecializations.subtitle')}</p>
                 </div>
                 <Button onClick={handleCreate}>
                     <Plus className="mr-2 h-4 w-4"/>
-                    Add Specialization
+                    {t('adminSpecializations.addSpecialization')}
                 </Button>
             </div>
 
@@ -107,14 +109,14 @@ export const Specializations: React.FC = () => {
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                     <Input
-                        placeholder="Search specializations..."
+                        placeholder={t('placeholders.searchSpecializations')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
                     />
                 </div>
                 <div className="text-sm text-muted-foreground">
-                    {filteredSpecializations.length} {filteredSpecializations.length === 1 ? 'specialization' : 'specializations'}
+                    {filteredSpecializations.length} {t('adminSpecializations.specializationsCount')}
                 </div>
             </div>
 
@@ -122,12 +124,12 @@ export const Specializations: React.FC = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Doctors</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.id')}</TableHead>
+                            <TableHead>{t('common.name')}</TableHead>
+                            <TableHead>{t('common.description')}</TableHead>
+                            <TableHead>{t('adminSpecializations.doctorsCount')}</TableHead>
+                            <TableHead>{t('common.created')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -143,7 +145,7 @@ export const Specializations: React.FC = () => {
                         ) : filteredSpecializations.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                                    No specializations found
+                                    {t('adminSpecializations.noSpecializations')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -196,8 +198,7 @@ export const Specializations: React.FC = () => {
             {filteredSpecializations.length > 0 && filteredSpecializations.some(s => s.doctors_count && s.doctors_count > 0) && (
                 <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
                     <p className="text-sm text-amber-800">
-                        <strong>Note:</strong> Specializations with assigned doctors cannot be deleted. Please reassign
-                        or remove doctors first.
+                        {t('adminSpecializations.cannotDelete')}
                     </p>
                 </div>
             )}

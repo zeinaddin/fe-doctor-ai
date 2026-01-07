@@ -1,5 +1,6 @@
 import React from 'react';
 import {useQuery} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Calendar, Clock, CheckCircle, Users, Star, Clock3} from 'lucide-react';
 import {format} from 'date-fns';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
@@ -30,6 +31,7 @@ const StatCard = ({title, value, icon: Icon, description}: {
 
 export const DoctorDashboard: React.FC = () => {
     const {user} = useAuth();
+    const {t} = useTranslation();
     const doctorId = user?.id || 1;
 
     const {data: stats, isLoading: statsLoading} = useQuery<DoctorDashboardStats>({
@@ -55,43 +57,44 @@ export const DoctorDashboard: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Welcome,
-                    Dr. {user ? getUserNames(user).firstName : ''}</h1>
-                <p className="text-muted-foreground mt-1">Here's your practice overview for today</p>
+                <h1 className="text-3xl font-bold tracking-tight">
+                    {t('doctorDashboard.welcome', {name: user ? getUserNames(user).firstName : ''})}
+                </h1>
+                <p className="text-muted-foreground mt-1">{t('doctorDashboard.subtitle')}</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard
-                    title="Today's Appointments"
+                    title={t('doctorDashboard.todayAppointments')}
                     value={stats?.todayAppointments || 0}
                     icon={Calendar}
-                    description="Scheduled for today"
+                    description={t('doctorDashboard.scheduledForToday')}
                 />
                 <StatCard
-                    title="Upcoming"
+                    title={t('doctorDashboard.upcoming')}
                     value={stats?.upcomingAppointments || 0}
                     icon={Clock}
-                    description="Future appointments"
+                    description={t('doctorDashboard.futureAppointments')}
                 />
                 <StatCard
-                    title="Completed"
+                    title={t('doctorDashboard.completed')}
                     value={stats?.completedAppointments || 0}
                     icon={CheckCircle}
-                    description="All time"
+                    description={t('doctorDashboard.allTime')}
                 />
                 <StatCard
-                    title="Total Patients"
+                    title={t('doctorDashboard.totalPatients')}
                     value={stats?.totalPatients || 0}
                     icon={Users}
-                    description="Under your care"
+                    description={t('doctorDashboard.underYourCare')}
                 />
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
                 <Card className="md:col-span-2">
                     <CardHeader>
-                        <CardTitle>Today's Schedule</CardTitle>
-                        <CardDescription>Your appointments for {format(new Date(), 'MMMM dd, yyyy')}</CardDescription>
+                        <CardTitle>{t('doctorDashboard.todaySchedule')}</CardTitle>
+                        <CardDescription>{t('doctorDashboard.appointmentsFor', {date: format(new Date(), 'MMMM dd, yyyy')})}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {todayBookings && todayBookings.length > 0 ? (
@@ -129,7 +132,7 @@ export const DoctorDashboard: React.FC = () => {
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
                                 <Clock3 className="h-12 w-12 mx-auto mb-3 opacity-20"/>
-                                <p>No appointments scheduled for today</p>
+                                <p>{t('doctorDashboard.noAppointmentsToday')}</p>
                             </div>
                         )}
                     </CardContent>
@@ -140,21 +143,21 @@ export const DoctorDashboard: React.FC = () => {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Star className="h-5 w-5 text-yellow-500"/>
-                                Your Rating
+                                {t('doctorDashboard.yourRating')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-4xl font-bold">{stats?.rating ? stats.rating.toFixed(1) : 'N/A'}</div>
-                            <p className="text-sm text-muted-foreground mt-2">Based on patient feedback</p>
+                            <div className="text-4xl font-bold">{stats?.rating ? stats.rating.toFixed(1) : t('common.na')}</div>
+                            <p className="text-sm text-muted-foreground mt-2">{t('doctorDashboard.basedOnFeedback')}</p>
                         </CardContent>
                     </Card>
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Quick Actions</CardTitle>
+                            <CardTitle>{t('doctorDashboard.quickActions')}</CardTitle>
                         </CardHeader>
                         <CardContent className="text-sm text-muted-foreground">
-                            Use the sidebar to manage your schedule, view patients, or update medical records.
+                            {t('doctorDashboard.sidebarInstructions')}
                         </CardContent>
                     </Card>
                 </div>

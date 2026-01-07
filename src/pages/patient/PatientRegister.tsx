@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, HeartPulse, Loader2, UserCircle } from 'lucide-react';
+import {Activity, ArrowRight, HeartPulse, Loader2} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -76,7 +76,7 @@ export const PatientRegister: React.FC = () => {
       <header className="relative z-10 p-6 flex items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-2.5 group">
           <div className="h-9 w-9 rounded-xl healthcare-gradient flex items-center justify-center shadow-sm">
-            <HeartPulse className="h-5 w-5 text-white" />
+            <HeartPulse className="h-5 w-5 text-white bg-gradient-to-br"/>
           </div>
           <span className="font-bold text-gradient">{t('brand.name')}</span>
         </Link>
@@ -88,14 +88,14 @@ export const PatientRegister: React.FC = () => {
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
             {/* Header */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 mb-4 shadow-lg">
-                <UserCircle className="h-8 w-8 text-white" />
+            <div className="text-center space-y-2">
+              <div className="flex justify-center">
+                <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
+                  <Activity className="h-6 w-6 text-primary-foreground"/>
+                </div>
               </div>
-              <h1 className="text-2xl font-bold text-gradient-patient">{t('auth.patient.createAccount')}</h1>
-              <p className="text-muted-foreground mt-2">
-                {t('auth.patient.registerSubtitle')}
-              </p>
+              <h1 className="text-3xl font-bold tracking-tight">{t('auth.welcomeBack')}</h1>
+              <p className="text-muted-foreground">{t('auth.signInToContinue')}</p>
             </div>
 
             {/* Form */}

@@ -1,15 +1,18 @@
 import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 import {Activity} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {useAuth} from '../contexts/AuthContext';
+import {getDefaultPortalPath} from '../types';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
     const {login} = useAuth();
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -21,27 +24,15 @@ export const Login: React.FC = () => {
         setLoading(true);
 
         try {
-            // Login now returns the user object directly
-            // The authService handles:
-            // 1. POST /users/login -> get tokens
-            // 2. GET /users/me -> get user profile
-            // 3. Store tokens and user
             const user = await login({email, password});
-
-            // Redirect based on user role
-            if (user.is_admin) {
-                navigate('/admin/dashboard');
-            } else if (user.is_doctor) {
-                navigate('/doctor/dashboard');
-            } else {
-                navigate('/patient/dashboard');
-            }
+            // Redirect to user's default portal based on their highest role
+            navigate(getDefaultPortalPath(user));
         } catch (err: any) {
             const errorMessage =
                 err.response?.data?.detail ||
                 err.response?.data?.message ||
                 err.message ||
-                'Invalid credentials. Please try again.';
+                t('auth.invalidCredentials');
 
             setError(errorMessage);
             console.error('Login error:', err);
@@ -61,15 +52,15 @@ export const Login: React.FC = () => {
                             <Activity className="h-6 w-6 text-primary-foreground"/>
                         </div>
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-                    <p className="text-muted-foreground">Sign in to your account to continue</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('auth.welcomeBack')}</h1>
+                    <p className="text-muted-foreground">{t('auth.signInToContinue')}</p>
                 </div>
 
                 {/* Login Card */}
                 <Card className="border-0 shadow-xl">
                     <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl">Sign in</CardTitle>
-                        <CardDescription>Enter your credentials to access your dashboard</CardDescription>
+                        <CardTitle className="text-2xl">{t('common.signIn')}</CardTitle>
+                        <CardDescription>{t('auth.enterCredentials')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -81,11 +72,11 @@ export const Login: React.FC = () => {
                             )}
 
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">{t('common.email')}</Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="name@example.com"
+                                    placeholder={t('placeholders.email')}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -96,11 +87,11 @@ export const Login: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">{t('common.password')}</Label>
                                 <Input
                                     id="password"
                                     type="password"
-                                    placeholder="••••••••"
+                                    placeholder={t('placeholders.password')}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -110,16 +101,15 @@ export const Login: React.FC = () => {
                             </div>
 
                             <Button type="submit" className="w-full h-11" disabled={loading}>
-                                {loading ? 'Signing in...' : 'Sign in'}
+                                {loading ? t('common.signingIn') : t('common.signIn')}
                             </Button>
 
-                            {/* Demo credentials */}
-                            <div className="pt-4 border-t">
-                                <p className="text-xs text-muted-foreground text-center mb-2">Demo accounts:</p>
-                                <div className="space-y-1 text-xs text-muted-foreground">
-                                    <p className="text-center">Admin: admin@example.com / password</p>
-                                    <p className="text-center">Doctor: doctor@example.com / password</p>
-                                </div>
+                            {/* Register link */}
+                            <div className="text-center text-sm">
+                                <span className="text-muted-foreground">{t('auth.noAccount')}</span>{' '}
+                                <Link to="/register" className="text-primary hover:underline font-medium">
+                                    {t('common.signUp')}
+                                </Link>
                             </div>
                         </form>
                     </CardContent>
@@ -127,7 +117,7 @@ export const Login: React.FC = () => {
 
                 {/* Footer */}
                 <p className="text-center text-xs text-muted-foreground">
-                    AI-powered healthcare management platform
+                    {t('auth.aiPoweredPlatform')}
                 </p>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { UserRole, getUserRole } from '../../types';
+import { UserRole, canAccessPortal } from '../../types';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -23,9 +23,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
     return <Navigate to="/login" replace />;
   }
 
+  // Check if user can access any of the allowed roles/portals
   if (allowedRoles && user) {
-    const userRole = getUserRole(user);
-    if (!allowedRoles.includes(userRole)) {
+    const hasAccess = allowedRoles.some(role => canAccessPortal(user, role));
+    if (!hasAccess) {
       return <Navigate to="/unauthorized" replace />;
     }
   }

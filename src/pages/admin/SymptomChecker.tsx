@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Brain, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ const commonSymptoms = [
 ];
 
 export const SymptomChecker: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -63,20 +65,20 @@ export const SymptomChecker: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Symptom Checker</h1>
-        <p className="text-muted-foreground mt-1">Analyze symptoms and recommend specialists</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('adminSymptomChecker.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('adminSymptomChecker.subtitle')}</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Input Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Enter Symptoms</CardTitle>
-            <CardDescription>Select symptoms and provide patient details</CardDescription>
+            <CardTitle>{t('adminSymptomChecker.enterSymptoms')}</CardTitle>
+            <CardDescription>{t('adminSymptomChecker.selectSymptoms')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <label className="text-sm font-medium mb-3 block">Select Symptoms</label>
+              <label className="text-sm font-medium mb-3 block">{t('adminSymptomChecker.selectSymptomsLabel')}</label>
               <div className="flex flex-wrap gap-2">
                 {commonSymptoms.map((symptom) => (
                   <Badge
@@ -85,7 +87,7 @@ export const SymptomChecker: React.FC = () => {
                     className="cursor-pointer hover:bg-primary/80"
                     onClick={() => toggleSymptom(symptom)}
                   >
-                    {symptom}
+                    {t(`adminSymptomChecker.symptoms.${symptom.toLowerCase().replace(/ /g, '')}`)}
                   </Badge>
                 ))}
               </div>
@@ -93,18 +95,18 @@ export const SymptomChecker: React.FC = () => {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Age (optional)</label>
+                <label className="text-sm font-medium">{t('adminSymptomChecker.age')}</label>
                 <Input
                   type="number"
-                  placeholder="Enter age"
+                  placeholder={t('adminSymptomChecker.enterAge')}
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Gender (optional)</label>
+                <label className="text-sm font-medium">{t('adminSymptomChecker.gender')}</label>
                 <Input
-                  placeholder="Male/Female"
+                  placeholder={t('adminSymptomChecker.genderPlaceholder')}
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
                 />
@@ -118,7 +120,7 @@ export const SymptomChecker: React.FC = () => {
               disabled={selectedSymptoms.length === 0 || mutation.isPending}
             >
               <Brain className="mr-2 h-5 w-5" />
-              {mutation.isPending ? 'Analyzing...' : 'Analyze Symptoms'}
+              {mutation.isPending ? t('adminSymptomChecker.analyzing') : t('adminSymptomChecker.analyzeSymptoms')}
             </Button>
           </CardContent>
         </Card>
@@ -126,8 +128,8 @@ export const SymptomChecker: React.FC = () => {
         {/* Results Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Analysis Result</CardTitle>
-            <CardDescription>AI-powered diagnosis and recommendations</CardDescription>
+            <CardTitle>{t('adminSymptomChecker.analysisResult')}</CardTitle>
+            <CardDescription>{t('adminSymptomChecker.aiPoweredDiagnosis')}</CardDescription>
           </CardHeader>
           <CardContent>
             {mutation.isPending && (
@@ -138,20 +140,20 @@ export const SymptomChecker: React.FC = () => {
 
             {mutation.isError && (
               <div className="text-center py-12 text-muted-foreground">
-                Failed to analyze symptoms. Please try again.
+                {t('adminSymptomChecker.analysisFailed')}
               </div>
             )}
 
             {result && !mutation.isPending && (
               <div className="space-y-4">
                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
-                  <div className="text-sm text-muted-foreground mb-1">Recommended Specialty</div>
+                  <div className="text-sm text-muted-foreground mb-1">{t('adminSymptomChecker.recommendedSpecialty')}</div>
                   <div className="text-2xl font-bold text-primary">
                     {result.predictedSpecialty.replace(/_/g, ' ')}
                   </div>
                   {result.confidence !== undefined && (
                     <div className="text-sm text-muted-foreground mt-2">
-                      Confidence: {(result.confidence * 100).toFixed(1)}%
+                      {t('aiConsultation.confidence', {percent: (result.confidence * 100).toFixed(1)})}
                     </div>
                   )}
                 </div>
@@ -160,7 +162,7 @@ export const SymptomChecker: React.FC = () => {
                   <div className="p-4 rounded-lg border">
                     <div className="flex items-center gap-2 mb-2">
                       {getUrgencyIcon(result.urgencyLevel)}
-                      <span className="text-sm font-medium">Urgency Level</span>
+                      <span className="text-sm font-medium">{t('adminSymptomChecker.urgencyLevel')}</span>
                     </div>
                     <Badge variant={getUrgencyBadge(result.urgencyLevel) as any}>
                       {result.urgencyLevel}
@@ -170,7 +172,7 @@ export const SymptomChecker: React.FC = () => {
 
                 {result.recommendations && result.recommendations.length > 0 && (
                   <div className="p-4 rounded-lg border">
-                    <div className="text-sm font-medium mb-3">Suggested Questions for Doctor</div>
+                    <div className="text-sm font-medium mb-3">{t('adminSymptomChecker.suggestedQuestions')}</div>
                     <ul className="space-y-2">
                       {result.recommendations.map((rec, index) => (
                         <li key={index} className="text-sm text-muted-foreground flex gap-2">
@@ -187,7 +189,7 @@ export const SymptomChecker: React.FC = () => {
             {!result && !mutation.isPending && !mutation.isError && (
               <div className="text-center py-12 text-muted-foreground">
                 <Brain className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                <p>Select symptoms and click analyze to see results</p>
+                <p>{t('adminSymptomChecker.selectAndAnalyze')}</p>
               </div>
             )}
           </CardContent>

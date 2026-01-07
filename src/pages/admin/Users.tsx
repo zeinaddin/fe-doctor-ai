@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Plus, Search, Edit, Trash2} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -12,6 +13,7 @@ import type {User, UserFormData, RegisterRequest} from '../../types';
 import {getUserRole} from '../../types';
 
 export const Users: React.FC = () => {
+    const {t} = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [page] = useState(0);
     const rowsPerPage = 10;
@@ -66,12 +68,12 @@ export const Users: React.FC = () => {
     };
 
     const handleDeleteUser = async (userId: number) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
+        if (window.confirm(t('adminUsers.confirmDelete'))) {
             try {
                 await deleteUserMutation.mutateAsync(userId);
             } catch (error) {
                 console.error('Failed to delete user:', error);
-                alert('Failed to delete user. Please try again.');
+                alert(t('adminUsers.deleteFailed'));
             }
         }
     };
@@ -96,7 +98,7 @@ export const Users: React.FC = () => {
             }
         } catch (error) {
             console.error('Failed to save user:', error);
-            alert('Failed to save user. Please try again.');
+            alert(t('adminUsers.saveFailed'));
         }
     };
 
@@ -122,12 +124,12 @@ export const Users: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Users</h1>
-                    <p className="text-muted-foreground mt-1">Manage system users and permissions</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('adminUsers.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('adminUsers.subtitle')}</p>
                 </div>
                 <Button onClick={handleCreateUser}>
                     <Plus className="mr-2 h-4 w-4"/>
-                    Add User
+                    {t('adminUsers.addUser')}
                 </Button>
             </div>
 
@@ -135,7 +137,7 @@ export const Users: React.FC = () => {
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                     <Input
-                        placeholder="Search users..."
+                        placeholder={t('placeholders.searchUsers')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -147,12 +149,12 @@ export const Users: React.FC = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Role</TableHead>
-                            <TableHead>Phone</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.name')}</TableHead>
+                            <TableHead>{t('common.email')}</TableHead>
+                            <TableHead>{t('adminUsers.role')}</TableHead>
+                            <TableHead>{t('common.phone')}</TableHead>
+                            <TableHead>{t('common.created')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -168,7 +170,7 @@ export const Users: React.FC = () => {
                         ) : filteredUsers?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                                    No users found
+                                    {t('adminUsers.noUsersFound')}
                                 </TableCell>
                             </TableRow>
                         ) : (

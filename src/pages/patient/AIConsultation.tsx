@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { MessageCircle, Send, Loader2, Check, Bot, User, ArrowLeft, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +15,7 @@ import type { ChatMessage, ConsultationAnalysis } from '../../types';
 
 export const AIConsultation: React.FC = () => {
   useAuth();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedConsultation, setSelectedConsultation] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -132,14 +134,14 @@ export const AIConsultation: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">AI Health Consultation</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t('aiConsultation.title')}</h1>
             <p className="text-muted-foreground mt-1">
-              Chat with our AI assistant about your symptoms and get personalized recommendations
+              {t('aiConsultation.subtitle')}
             </p>
           </div>
           <Button onClick={() => setShowStartForm(true)}>
             <MessageCircle className="mr-2 h-4 w-4" />
-            Start New Consultation
+            {t('aiConsultation.startNewConsultation')}
           </Button>
         </div>
 
@@ -149,12 +151,12 @@ export const AIConsultation: React.FC = () => {
             <div className="flex items-start gap-3">
               <Sparkles className="h-5 w-5 text-blue-600 mt-1" />
               <div>
-                <h3 className="font-semibold text-blue-900 mb-1">How it works</h3>
+                <h3 className="font-semibold text-blue-900 mb-1">{t('aiConsultation.howItWorks')}</h3>
                 <ul className="text-sm text-blue-800 space-y-1">
-                  <li>• Describe your symptoms in detail</li>
-                  <li>• Chat with our AI assistant for clarification</li>
-                  <li>• Get analysis and doctor recommendations</li>
-                  <li>• Book appointments with recommended specialists</li>
+                  <li>• {t('aiConsultation.step1')}</li>
+                  <li>• {t('aiConsultation.step2')}</li>
+                  <li>• {t('aiConsultation.step3')}</li>
+                  <li>• {t('aiConsultation.step4')}</li>
                 </ul>
               </div>
             </div>
@@ -167,13 +169,13 @@ export const AIConsultation: React.FC = () => {
             <CardContent className="py-12">
               <div className="text-center">
                 <MessageCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-20" />
-                <h3 className="text-lg font-semibold mb-2">No Consultations Yet</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('aiConsultation.noConsultationsYet')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Start your first AI consultation to get personalized health recommendations.
+                  {t('aiConsultation.startFirstConsultation')}
                 </p>
                 <Button onClick={() => setShowStartForm(true)}>
                   <MessageCircle className="mr-2 h-4 w-4" />
-                  Start Consultation
+                  {t('aiConsultation.startConsultationBtn')}
                 </Button>
               </div>
             </CardContent>
@@ -194,7 +196,7 @@ export const AIConsultation: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg mb-1">
-                          Consultation #{consultation.id}
+                          {t('aiConsultation.consultation', {id: consultation.id})}
                         </h3>
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(consultation.created_at), 'MMMM dd, yyyy • HH:mm')}
@@ -215,7 +217,7 @@ export const AIConsultation: React.FC = () => {
                       </Badge>
                       {consultation.confidence && (
                         <span className="text-xs text-muted-foreground">
-                          {Math.round(consultation.confidence * 100)}% confidence
+                          {t('aiConsultation.confidence', {percent: Math.round(consultation.confidence * 100)})}
                         </span>
                       )}
                     </div>
@@ -236,11 +238,11 @@ export const AIConsultation: React.FC = () => {
         <div>
           <Button variant="ghost" onClick={() => setShowStartForm(false)} className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
+            {t('common.back')}
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">Start New Consultation</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('aiConsultation.startNewConsultation')}</h1>
           <p className="text-muted-foreground mt-1">
-            Describe your symptoms in detail to get started
+            {t('aiConsultation.describeSymptoms')}
           </p>
         </div>
 
@@ -248,11 +250,11 @@ export const AIConsultation: React.FC = () => {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Describe Your Symptoms</label>
+                <label className="text-sm font-medium mb-2 block">{t('aiConsultation.describeSymptoms')}</label>
                 <Textarea
                   value={initialSymptoms}
                   onChange={(e) => setInitialSymptoms(e.target.value)}
-                  placeholder="Please describe what you're experiencing, including when symptoms started, severity, and any other relevant details..."
+                  placeholder={t('aiConsultation.symptomsPlaceholder')}
                   rows={8}
                   className="resize-none"
                 />
@@ -260,7 +262,7 @@ export const AIConsultation: React.FC = () => {
 
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setShowStartForm(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   onClick={() => startConsultationMutation.mutate(initialSymptoms)}
@@ -269,12 +271,12 @@ export const AIConsultation: React.FC = () => {
                   {startConsultationMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Starting...
+                      {t('aiConsultation.starting')}
                     </>
                   ) : (
                     <>
                       <MessageCircle className="mr-2 h-4 w-4" />
-                      Start Consultation
+                      {t('aiConsultation.startConsultationBtn')}
                     </>
                   )}
                 </Button>
@@ -309,12 +311,12 @@ export const AIConsultation: React.FC = () => {
             {completeConsultationMutation.isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Completing...
+                {t('aiConsultation.completing')}
               </>
             ) : (
               <>
                 <Check className="mr-2 h-4 w-4" />
-                Complete Consultation
+                {t('aiConsultation.completeConsultation')}
               </>
             )}
           </Button>
@@ -325,19 +327,19 @@ export const AIConsultation: React.FC = () => {
       {analysis && (
         <Card className="border-green-200 bg-green-50">
           <CardHeader>
-            <CardTitle className="text-green-900">Consultation Analysis</CardTitle>
+            <CardTitle className="text-green-900">{t('aiConsultation.consultationAnalysis')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {analysis.analysis.summary && (
               <div>
-                <h4 className="font-semibold mb-2 text-green-900">Summary</h4>
+                <h4 className="font-semibold mb-2 text-green-900">{t('aiConsultation.summary')}</h4>
                 <p className="text-sm text-green-800">{analysis.analysis.summary}</p>
               </div>
             )}
 
             {analysis.analysis.symptoms && analysis.analysis.symptoms.length > 0 && (
               <div>
-                <h4 className="font-semibold mb-2 text-green-900">Identified Symptoms</h4>
+                <h4 className="font-semibold mb-2 text-green-900">{t('aiConsultation.identifiedSymptoms')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {analysis.analysis.symptoms.map((symptom, idx) => (
                     <Badge key={idx} variant="outline" className="bg-white">
@@ -350,7 +352,7 @@ export const AIConsultation: React.FC = () => {
 
             {analysis.analysis.recommended_specialization && (
               <div>
-                <h4 className="font-semibold mb-2 text-green-900">Recommended Specialization</h4>
+                <h4 className="font-semibold mb-2 text-green-900">{t('aiConsultation.recommendedSpecialization')}</h4>
                 <Badge className="bg-green-600">
                   {analysis.analysis.recommended_specialization}
                 </Badge>
@@ -359,7 +361,7 @@ export const AIConsultation: React.FC = () => {
 
             {analysis.recommended_doctors.length > 0 && (
               <div>
-                <h4 className="font-semibold mb-2 text-green-900">Recommended Doctors</h4>
+                <h4 className="font-semibold mb-2 text-green-900">{t('aiConsultation.recommendedDoctors')}</h4>
                 <div className="grid gap-2">
                   {analysis.recommended_doctors.map((doctor) => (
                     <div
@@ -447,7 +449,7 @@ export const AIConsultation: React.FC = () => {
                   handleSendMessage();
                 }
               }}
-              placeholder="Type your message... (Shift+Enter for new line)"
+              placeholder={t('aiConsultation.typeMessage')}
               rows={2}
               className="resize-none"
               disabled={isStreaming || currentConsultation?.status === 'completed'}

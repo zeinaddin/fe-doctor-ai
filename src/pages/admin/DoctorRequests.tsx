@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Ban} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Card} from '@/components/ui/card';
@@ -17,6 +18,7 @@ import {doctorService} from '@/services/doctorService.ts';
 import {type Doctor, DoctorStatus} from '@/types';
 
 export const DoctorRequests: React.FC = () => {
+    const {t} = useTranslation();
     const queryClient = useQueryClient();
     const [page, setPage] = useState(1);
     const [pageSize] = useState(10);
@@ -66,12 +68,12 @@ export const DoctorRequests: React.FC = () => {
     });
 
     const handleApprove = async (doctorId: number) => {
-        if (window.confirm('Are you sure you want to approve this doctor application?')) {
+        if (window.confirm(t('adminDoctorRequests.confirmApprove'))) {
             try {
                 await approveMutation.mutateAsync(doctorId);
             } catch (error) {
                 console.error('Failed to approve doctor:', error);
-                alert('Failed to approve doctor. Please try again.');
+                alert(t('adminDoctorRequests.approveFailed'));
             }
         }
     };
@@ -91,17 +93,17 @@ export const DoctorRequests: React.FC = () => {
             });
         } catch (error) {
             console.error('Failed to reject doctor:', error);
-            alert('Failed to reject doctor. Please try again.');
+            alert(t('adminDoctorRequests.rejectFailed'));
         }
     };
 
     const handleSuspend = async (doctorId: number) => {
-        if (window.confirm('Are you sure you want to suspend this doctor?')) {
+        if (window.confirm(t('adminDoctorRequests.confirmSuspend'))) {
             try {
                 await suspendMutation.mutateAsync(doctorId);
             } catch (error) {
                 console.error('Failed to suspend doctor:', error);
-                alert('Failed to suspend doctor. Please try again.');
+                alert(t('adminDoctorRequests.suspendFailed'));
             }
         }
     };
@@ -138,8 +140,8 @@ export const DoctorRequests: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Doctor Management</h1>
-                    <p className="text-muted-foreground mt-1">Review and manage doctor applications and status</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('adminDoctorRequests.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('adminDoctorRequests.subtitle')}</p>
                 </div>
             </div>
 
@@ -153,7 +155,7 @@ export const DoctorRequests: React.FC = () => {
                         setPage(1);
                     }}
                 >
-                    All
+                    {t('common.all')}
                 </Button>
                 <Button
                     variant={selectedFilter === DoctorStatus.PENDING ? 'default' : 'outline'}
@@ -164,7 +166,7 @@ export const DoctorRequests: React.FC = () => {
                     }}
                 >
                     <Clock className="h-4 w-4 mr-1"/>
-                    Pending
+                    {t('common.pending')}
                 </Button>
                 <Button
                     variant={selectedFilter === DoctorStatus.APPROVED ? 'default' : 'outline'}
@@ -175,7 +177,7 @@ export const DoctorRequests: React.FC = () => {
                     }}
                 >
                     <CheckCircle className="h-4 w-4 mr-1"/>
-                    Approved
+                    {t('common.approved')}
                 </Button>
                 <Button
                     variant={selectedFilter === DoctorStatus.REJECTED ? 'default' : 'outline'}
@@ -186,7 +188,7 @@ export const DoctorRequests: React.FC = () => {
                     }}
                 >
                     <XCircle className="h-4 w-4 mr-1"/>
-                    Rejected
+                    {t('common.rejected')}
                 </Button>
                 <Button
                     variant={selectedFilter === DoctorStatus.SUSPENDED ? 'default' : 'outline'}
@@ -197,7 +199,7 @@ export const DoctorRequests: React.FC = () => {
                     }}
                 >
                     <Ban className="h-4 w-4 mr-1"/>
-                    Suspended
+                    {t('common.suspended')}
                 </Button>
             </div>
 
@@ -205,14 +207,14 @@ export const DoctorRequests: React.FC = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Applicant</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Specialty</TableHead>
-                            <TableHead>License</TableHead>
-                            <TableHead>Experience</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.id')}</TableHead>
+                            <TableHead>{t('adminDoctorRequests.applicant')}</TableHead>
+                            <TableHead>{t('common.email')}</TableHead>
+                            <TableHead>{t('adminDoctors.specialty')}</TableHead>
+                            <TableHead>{t('adminDoctors.license')}</TableHead>
+                            <TableHead>{t('adminDoctors.experience')}</TableHead>
+                            <TableHead>{t('common.status')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -229,11 +231,11 @@ export const DoctorRequests: React.FC = () => {
                             <TableRow>
                                 <TableCell colSpan={8} className="text-center py-12">
                                     <Clock className="h-12 w-12 mx-auto mb-3 opacity-20 text-muted-foreground"/>
-                                    <p className="text-muted-foreground font-medium">No doctors found</p>
+                                    <p className="text-muted-foreground font-medium">{t('adminDoctorRequests.noDoctorsFound')}</p>
                                     <p className="text-sm text-muted-foreground mt-1">
                                         {selectedFilter === 'ALL'
-                                            ? 'No doctor applications yet'
-                                            : `No ${selectedFilter} doctors`}
+                                            ? t('adminDoctorRequests.noApplicationsYet')
+                                            : t('adminDoctorRequests.noStatusDoctors', {status: selectedFilter})}
                                     </p>
                                 </TableCell>
                             </TableRow>
@@ -269,23 +271,23 @@ export const DoctorRequests: React.FC = () => {
                                                         variant="ghost"
                                                         size="sm"
                                                         className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                                                        title="Approve application"
+                                                        title={t('adminDoctorRequests.approve')}
                                                         onClick={() => handleApprove(doctor.id)}
                                                         disabled={approveMutation.isPending}
                                                     >
                                                         <CheckCircle className="h-4 w-4 mr-1"/>
-                                                        Approve
+                                                        {t('adminDoctorRequests.approve')}
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
                                                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                        title="Reject application"
+                                                        title={t('adminDoctorRequests.reject')}
                                                         onClick={() => handleRejectClick(doctor.id)}
                                                         disabled={rejectMutation.isPending}
                                                     >
                                                         <XCircle className="h-4 w-4 mr-1"/>
-                                                        Reject
+                                                        {t('adminDoctorRequests.reject')}
                                                     </Button>
                                                 </>
                                             )}
@@ -294,12 +296,12 @@ export const DoctorRequests: React.FC = () => {
                                                     variant="ghost"
                                                     size="sm"
                                                     className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
-                                                    title="Suspend doctor"
+                                                    title={t('adminDoctorRequests.suspend')}
                                                     onClick={() => handleSuspend(doctor.id)}
                                                     disabled={suspendMutation.isPending}
                                                 >
                                                     <Ban className="h-4 w-4 mr-1"/>
-                                                    Suspend
+                                                    {t('adminDoctorRequests.suspend')}
                                                 </Button>
                                             )}
                                             {(doctor.status === DoctorStatus.REJECTED || doctor.status === DoctorStatus.SUSPENDED) && (
@@ -307,12 +309,12 @@ export const DoctorRequests: React.FC = () => {
                                                     variant="ghost"
                                                     size="sm"
                                                     className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                                                    title="Approve doctor"
+                                                    title={t('adminDoctorRequests.approve')}
                                                     onClick={() => handleApprove(doctor.id)}
                                                     disabled={approveMutation.isPending}
                                                 >
                                                     <CheckCircle className="h-4 w-4 mr-1"/>
-                                                    Approve
+                                                    {t('adminDoctorRequests.approve')}
                                                 </Button>
                                             )}
                                         </div>
@@ -328,7 +330,7 @@ export const DoctorRequests: React.FC = () => {
             {(doctors.length > 0 || page > 1) && (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
-                        Page {page} - Showing {doctors.length} results
+                        {t('adminDoctorRequests.showingResults', {page, count: doctors.length})}
                     </p>
                     <div className="flex gap-2">
                         <Button
@@ -338,7 +340,7 @@ export const DoctorRequests: React.FC = () => {
                             disabled={page === 1}
                         >
                             <ChevronLeft className="h-4 w-4 mr-1"/>
-                            Previous
+                            {t('common.previous')}
                         </Button>
                         <Button
                             variant="outline"
@@ -346,7 +348,7 @@ export const DoctorRequests: React.FC = () => {
                             onClick={() => setPage(p => p + 1)}
                             disabled={doctors.length < pageSize}
                         >
-                            Next
+                            {t('common.next')}
                             <ChevronRight className="h-4 w-4 ml-1"/>
                         </Button>
                     </div>
@@ -357,8 +359,7 @@ export const DoctorRequests: React.FC = () => {
             {doctors.length > 0 && (
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                     <p className="text-sm text-blue-800">
-                        <strong>Note:</strong> Approving an application will grant the user doctor privileges and make
-                        them available for appointments. You can suspend approved doctors if needed.
+                        {t('adminDoctorRequests.approvalNote')}
                     </p>
                 </div>
             )}
@@ -367,23 +368,22 @@ export const DoctorRequests: React.FC = () => {
             <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
-                        <DialogTitle>Reject Doctor Application</DialogTitle>
+                        <DialogTitle>{t('adminDoctorRequests.rejectApplication')}</DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            Please provide a reason for rejecting this application. This will help the applicant
-                            understand why their application was not approved.
+                            {t('adminDoctorRequests.rejectionHelp')}
                         </p>
 
                         <div className="space-y-2">
-                            <Label htmlFor="rejection-reason">Rejection Reason (Optional)</Label>
+                            <Label htmlFor="rejection-reason">{t('adminDoctorRequests.rejectionReasonLabel')}</Label>
                             <textarea
                                 id="rejection-reason"
                                 value={rejectionReason}
                                 onChange={(e) => setRejectionReason(e.target.value)}
                                 className="w-full min-h-[100px] px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                placeholder="e.g., Incomplete documentation provided, Invalid license number, etc."
+                                placeholder={t('adminDoctorRequests.rejectionReasonPlaceholder')}
                             />
                         </div>
                     </div>
@@ -398,7 +398,7 @@ export const DoctorRequests: React.FC = () => {
                                 setSelectedDoctorId(null);
                             }}
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                         <Button
                             type="button"
@@ -406,7 +406,7 @@ export const DoctorRequests: React.FC = () => {
                             onClick={handleRejectSubmit}
                             disabled={rejectMutation.isPending}
                         >
-                            {rejectMutation.isPending ? 'Rejecting...' : 'Reject Application'}
+                            {rejectMutation.isPending ? t('adminDoctorRequests.rejecting') : t('adminDoctorRequests.rejectBtn')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

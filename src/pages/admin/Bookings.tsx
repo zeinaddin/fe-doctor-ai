@@ -1,5 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {Plus, Search, Edit, Trash2} from 'lucide-react';
 import {format} from 'date-fns';
 import {Button} from '@/components/ui/button';
@@ -29,6 +30,7 @@ const normalizeFormData = (data: AppointmentFormData) => {
 };
 
 export const Bookings: React.FC = () => {
+    const {t} = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [page] = useState(0);
     const rowsPerPage = 10;
@@ -52,7 +54,7 @@ export const Bookings: React.FC = () => {
         },
         onError: (err) => {
             console.error(err);
-            alert('Failed to create booking');
+            alert(t('adminBookings.createFailed'));
         },
     });
 
@@ -66,7 +68,7 @@ export const Bookings: React.FC = () => {
         },
         onError: (err) => {
             console.error(err);
-            alert('Failed to update booking');
+            alert(t('adminBookings.updateFailed'));
         },
     });
 
@@ -75,7 +77,7 @@ export const Bookings: React.FC = () => {
         onSuccess: () => queryClient.invalidateQueries({queryKey: ['bookings']}),
         onError: (err) => {
             console.error(err);
-            alert('Failed to cancel booking');
+            alert(t('adminBookings.cancelFailed'));
         },
     });
 
@@ -92,7 +94,7 @@ export const Bookings: React.FC = () => {
     };
 
     const handleCancelBooking = async (bookingId: number) => {
-        if (window.confirm('Are you sure you want to cancel this booking?')) {
+        if (window.confirm(t('adminBookings.confirmCancel'))) {
             await cancelBookingMutation.mutateAsync(bookingId);
         }
     };
@@ -106,7 +108,7 @@ export const Bookings: React.FC = () => {
             }
         } catch (error) {
             console.error('Failed to save booking:', error);
-            alert('Failed to save booking. Please try again.');
+            alert(t('adminBookings.saveFailed'));
         }
     };
 
@@ -145,12 +147,12 @@ export const Bookings: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
-                    <p className="text-muted-foreground mt-1">Manage appointments and schedules</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('adminBookings.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('adminBookings.subtitle')}</p>
                 </div>
                 <Button onClick={handleCreateBooking}>
                     <Plus className="mr-2 h-4 w-4"/>
-                    New Booking
+                    {t('adminBookings.newBooking')}
                 </Button>
             </div>
 
@@ -158,7 +160,7 @@ export const Bookings: React.FC = () => {
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                     <Input
-                        placeholder="Search bookings..."
+                        placeholder={t('placeholders.searchBookings')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -170,13 +172,13 @@ export const Bookings: React.FC = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Patient</TableHead>
-                            <TableHead>Doctor</TableHead>
-                            <TableHead>Date & Time</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Notes</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('common.id')}</TableHead>
+                            <TableHead>{t('common.patient')}</TableHead>
+                            <TableHead>{t('common.doctor')}</TableHead>
+                            <TableHead>{t('adminBookings.dateTime')}</TableHead>
+                            <TableHead>{t('common.status')}</TableHead>
+                            <TableHead>{t('common.notes')}</TableHead>
+                            <TableHead className="text-right">{t('common.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -192,7 +194,7 @@ export const Bookings: React.FC = () => {
                         ) : filteredBookings.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                                    No bookings found
+                                    {t('adminBookings.noBookings')}
                                 </TableCell>
                             </TableRow>
                         ) : (
