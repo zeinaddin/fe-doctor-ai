@@ -1,90 +1,146 @@
 import api from './api';
 import type {SymptomCheckRequest, SymptomCheckResponse} from '../types';
 
-interface AIConsultation {
+interface ChatSession {
     id: number;
-    patient_id: number;
-    symptoms: string;
+    user_id: number | null;
+    source: string;
     status: string;
+    locale: string;
     created_at: string;
-    updated_at: string;
 }
 
-interface AIMessage {
+interface ChatMessage {
     id: number;
-    consultation_id: number;
+    session_id: number;
     role: string;
     content: string;
+    content_type: string;
     created_at: string;
+}
+
+interface ChatSessionWithMessages extends ChatSession {
+    messages: ChatMessage[];
 }
 
 export const aiService = {
     async checkSymptoms(symptoms: SymptomCheckRequest): Promise<SymptomCheckResponse> {
-        // Create consultation with symptom text
-        const symptomsText = `Patient symptoms: ${symptoms.symptoms.join(', ')}${symptoms.age ? `. Age: ${symptoms.age}` : ''}${symptoms.gender ? `. Gender: ${symptoms.gender}` : ''}`;
-
-        const consultationResponse = await api.post<AIConsultation>('/ai-consultations', {
-            symptoms_text: symptomsText,
+        // Create a new chat session
+        const sessionResponse = await api.post<ChatSession>('/chat/sessions', {
+            source: 'web',
+            locale: 'en',
+            context_json: { type: 'symptom_check' },
         });
 
-        // Complete the consultation to get AI analysis
-        const analysisResponse = await api.post<{
-            analysis: {
-                recommended_specialization?: string;
-                confidence?: number;
-                urgency?: string;
-                summary?: string;
-                key_symptoms?: string[];
-                suggested_questions_for_doctor?: string[];
-            };
-            recommended_doctors: any[];
-        }>(`/ai-consultations/${consultationResponse.data.id}/complete`);
+        const sessionId = sessionResponse.data.id;
 
+        // Send symptoms as a message - this triggers AI analysis
+        const symptomsText = `I need help analyzing these symptoms: ${symptoms.symptoms.join(', ')}${symptoms.age ? `. Patient age: ${symptoms.age}` : ''}${symptoms.gender ? `. Gender: ${symptoms.gender}` : ''}. Please recommend a medical specialty and urgency level.`;
+
+        await api.post<ChatMessage>(`/chat/sessions/${sessionId}/messages`, {
+            content: symptomsText,
+            role: 'user',
+            content_type: 'text',
+        });
+
+        // Wait a moment for AI to process and get the session with messages
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const sessionWithMessages = await api.get<ChatSessionWithMessages>(`/chat/sessions/${sessionId}`);
+        const messages = sessionWithMessages.data.messages || [];
+
+        // Find the AI response
+        const aiResponse = messages.find(m => m.role === 'assistant');
+
+        if (aiResponse) {
+            // Parse the AI response to extract specialty and urgency
+            const content = aiResponse.content.toLowerCase();
+
+            // Extract specialty from response
+            let specialty = 'GENERAL_PRACTICE';
+            const specialties = [
+                'cardiology', 'neurology', 'dermatology', 'orthopedics',
+                'gastroenterology', 'pulmonology', 'endocrinology',
+                'ophthalmology', 'otolaryngology', 'urology', 'psychiatry',
+                'pediatrics', 'gynecology', 'rheumatology', 'nephrology',
+                'general_practice', 'internal_medicine', 'family_medicine'
+            ];
+
+            for (const spec of specialties) {
+                if (content.includes(spec)) {
+                    specialty = spec.toUpperCase().replace(/ /g, '_');
+                    break;
+                }
+            }
+
+            // Determine urgency
+            let urgency: 'LOW' | 'MEDIUM' | 'HIGH' | 'EMERGENCY' = 'MEDIUM';
+            if (content.includes('emergency') || content.includes('immediately') || content.includes('urgent')) {
+                urgency = 'HIGH';
+            } else if (content.includes('serious') || content.includes('soon')) {
+                urgency = 'MEDIUM';
+            } else if (content.includes('routine') || content.includes('minor')) {
+                urgency = 'LOW';
+            }
+
+            // Extract recommendations (sentences with "should", "recommend", "suggest")
+            const sentences = aiResponse.content.split(/[.!?]+/);
+            const recommendations = sentences
+                .filter(s => /should|recommend|suggest|advise|consider/i.test(s))
+                .map(s => s.trim())
+                .filter(s => s.length > 10)
+                .slice(0, 5);
+
+            return {
+                predictedSpecialty: specialty,
+                confidence: 0.75,
+                recommendations: recommendations.length > 0 ? recommendations : [
+                    'Consult with a healthcare professional for accurate diagnosis',
+                    'Keep track of your symptoms and their duration',
+                    'Note any factors that worsen or improve your symptoms'
+                ],
+                urgencyLevel: urgency,
+            };
+        }
+
+        // Fallback if no AI response
         return {
-            predictedSpecialty: analysisResponse.data.analysis.recommended_specialization || 'GENERAL_PRACTICE',
-            confidence: analysisResponse.data.analysis.confidence || 0.5,
-            recommendations: analysisResponse.data.analysis.suggested_questions_for_doctor || [],
-            urgencyLevel: (analysisResponse.data.analysis.urgency?.toUpperCase() as any) || 'MEDIUM',
+            predictedSpecialty: 'GENERAL_PRACTICE',
+            confidence: 0.5,
+            recommendations: [
+                'Please consult a general practitioner for initial evaluation',
+                'Keep track of your symptoms',
+            ],
+            urgencyLevel: 'MEDIUM',
         };
     },
 
-    async getMessages(consultationId: number): Promise<AIMessage[]> {
-        const response = await api.get<AIMessage[]>(`/ai-consultations/${consultationId}/messages`);
+    async getMessages(sessionId: number): Promise<ChatMessage[]> {
+        const response = await api.get<ChatMessage[]>(`/chat/sessions/${sessionId}/messages`);
         return response.data;
     },
 
-    async getMyConsultations(): Promise<AIConsultation[]> {
-        const response = await api.get<AIConsultation[]>('/ai-consultations/me');
+    async getMySessions(): Promise<ChatSession[]> {
+        const response = await api.get<ChatSession[]>('/chat/sessions/me');
         return response.data;
     },
 
-    async getConsultationById(id: number): Promise<AIConsultation> {
-        const response = await api.get<AIConsultation>(`/ai-consultations/${id}`);
+    async getSessionById(id: number): Promise<ChatSessionWithMessages> {
+        const response = await api.get<ChatSessionWithMessages>(`/chat/sessions/${id}`);
         return response.data;
     },
 
-    async completeConsultation(id: number): Promise<AIConsultation> {
-        const response = await api.post<AIConsultation>(`/ai-consultations/${id}/complete`);
+    async closeSession(id: number): Promise<ChatSession> {
+        const response = await api.post<ChatSession>(`/chat/sessions/${id}/close`);
         return response.data;
     },
 
-    async sendMessage(consultationId: number, content: string): Promise<AIMessage> {
-        const response = await api.post<AIMessage>(`/ai-consultations/${consultationId}/messages`, {
+    async sendMessage(sessionId: number, content: string): Promise<ChatMessage> {
+        const response = await api.post<ChatMessage>(`/chat/sessions/${sessionId}/messages`, {
             content,
+            role: 'user',
+            content_type: 'text',
         });
         return response.data;
-    },
-
-    async streamMessages(consultationId: number): Promise<ReadableStream> {
-        const token = localStorage.getItem('access_token');
-        const baseURL = api.defaults.baseURL;
-        const response = await fetch(`${baseURL}/ai-consultations/${consultationId}/messages/stream`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
-
-        if (!response.body) throw new Error('No response body');
-        return response.body;
     },
 };
