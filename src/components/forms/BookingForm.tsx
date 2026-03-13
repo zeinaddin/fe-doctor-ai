@@ -11,14 +11,20 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import {doctorService} from '../../services/doctorService';
-import type {BookingFormData, Doctor} from '../../types';
+import {userService} from '../../services/userService';
+import type {BookingFormData, Doctor, User} from '../../types';
+
+interface AdminBookingFormData extends BookingFormData {
+    patient_id?: number;
+}
 
 interface BookingFormProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: BookingFormData) => void;
+    onSubmit: (data: BookingFormData | AdminBookingFormData) => void;
     booking?: any;
     mode: 'create' | 'edit';
+    isAdmin?: boolean;
 }
 
 function toDatetimeLocalValue(input?: string) {
@@ -46,11 +52,19 @@ export const BookingForm: React.FC<BookingFormProps> = ({
                                                             onSubmit,
                                                             booking,
                                                             mode,
+                                                            isAdmin = false,
                                                         }) => {
-    const [formData, setFormData] = useState<BookingFormData>({
+    const [formData, setFormData] = useState<AdminBookingFormData>({
         doctor_id: 0,
         date_time: '',
         notes: '',
+        patient_id: undefined,
+    });
+
+    const {data: patientsData = []} = useQuery<User[]>({
+        queryKey: ['patients'],
+        queryFn: () => userService.getAllPatients(0, 100),
+        enabled: open && isAdmin && mode === 'create',
     });
 
     const {data: doctorsData = []} = useQuery<Doctor[]>({
@@ -65,6 +79,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
                 doctor_id: booking.doctor_id ?? booking.doctorId ?? 0,
                 date_time: toDatetimeLocalValue(booking.date_time ?? booking.appointmentDate ?? booking.dateTime),
                 notes: booking.notes ?? '',
+                patient_id: booking.patient_id ?? undefined,
             });
             return;
         }
@@ -74,11 +89,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
                 doctor_id: 0,
                 date_time: '',
                 notes: '',
+                patient_id: undefined,
             });
         }
     }, [booking, open]);
 
-    const handleChange = <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => {
+    const handleChange = <K extends keyof AdminBookingFormData>(field: K, value: AdminBookingFormData[K]) => {
         setFormData((prev) => ({...prev, [field]: value}));
     };
 
@@ -88,6 +104,13 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         if (mode === 'create') {
             if (!formData.doctor_id || formData.doctor_id <= 0) {
                 alert('Please select a doctor');
+                return;
+            }
+        }
+
+        if (isAdmin && mode === 'create') {
+            if (!formData.patient_id || formData.patient_id <= 0) {
+                alert('Please select a patient');
                 return;
             }
         }
@@ -118,6 +141,26 @@ export const BookingForm: React.FC<BookingFormProps> = ({
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {isAdmin && mode === 'create' && (
+                        <div className="space-y-2">
+                            <Label htmlFor="patientId">Patient</Label>
+                            <select
+                                id="patientId"
+                                value={formData.patient_id || 0}
+                                onChange={(e) => handleChange('patient_id', Number(e.target.value))}
+                                className="w-full h-10 px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                required
+                            >
+                                <option value={0}>Select a patient...</option>
+                                {patientsData.map((patient) => (
+                                    <option key={patient.id} value={patient.id}>
+                                        {patient.full_name} ({patient.email})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
                     {mode === 'create' && (
                         <div className="space-y-2">
                             <Label htmlFor="doctorId">Doctor</Label>

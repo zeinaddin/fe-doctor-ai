@@ -46,7 +46,11 @@ export const Bookings: React.FC = () => {
     });
 
     const createBookingMutation = useMutation({
-        mutationFn: (formData: AppointmentFormData) => bookingService.createBooking(normalizeFormData(formData)),
+        mutationFn: (formData: AppointmentFormData & { patient_id: number }) =>
+            bookingService.adminCreateBooking({
+                ...normalizeFormData(formData),
+                patient_id: formData.patient_id,
+            }),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['bookings']});
             setOpenForm(false);
@@ -99,10 +103,14 @@ export const Bookings: React.FC = () => {
         }
     };
 
-    const handleFormSubmit = async (formData: AppointmentFormData) => {
+    const handleFormSubmit = async (formData: AppointmentFormData & { patient_id?: number }) => {
         try {
             if (formMode === 'create') {
-                await createBookingMutation.mutateAsync(formData);
+                if (!formData.patient_id) {
+                    alert(t('adminBookings.selectPatient'));
+                    return;
+                }
+                await createBookingMutation.mutateAsync(formData as AppointmentFormData & { patient_id: number });
             } else if (selectedBooking) {
                 await updateBookingMutation.mutateAsync({id: selectedBooking.id, data: formData});
             }
@@ -264,8 +272,9 @@ export const Bookings: React.FC = () => {
                     setSelectedBooking(null);
                 }}
                 onSubmit={handleFormSubmit}
-                booking={selectedBooking as any} // update BookingForm props to Appointment for a clean fix
+                booking={selectedBooking as any}
                 mode={formMode}
+                isAdmin={true}
             />
         </div>
     );
