@@ -37,6 +37,7 @@
     "filter": "Filter",
     "all": "All",
     "view": "View",
+    "viewAll": "View All",
     "viewDetails": "View Details",
     "actions": "Actions",
     "status": "Status",
@@ -55,6 +56,7 @@
     "of": "of",
     "page": "Page",
     "noResults": "No results found",
+    "clearFilters": "Clear filters",
     "selectDate": "Select Date",
     "selectedDay": "Selected Day",
     "statistics": "Statistics",
@@ -85,7 +87,9 @@
     "diagnosis": "Diagnosis",
     "diagnosed": "Diagnosed",
     "showingRange": "Showing {{from}} to {{to}} of {{total}}",
-    "pageOf": "Page {{page}} of {{total}}"
+    "pageOf": "Page {{page}} of {{total}}",
+    "optional": "optional",
+    "saving": "Saving..."
   },
   "placeholders": {
     "email": "name@example.com",
@@ -113,12 +117,22 @@
   "landing": {
     "hero": {
       "title": "Modern Healthcare",
-      "titleHighlight": "Management",
+      "titleHighlight": "Simplified",
       "subtitle": "Streamline your healthcare experience with our comprehensive platform. Connect with doctors, manage appointments, and access your medical records securely.",
       "cta": "Get Started",
       "learnMore": "Learn More",
       "bookAppointment": "Book Appointment",
-      "trustedPlatform": "Trusted Healthcare Platform"
+      "trustedPlatform": "Trusted Healthcare Platform",
+      "badge": "Now accepting new patients",
+      "watchDemo": "Watch Demo",
+      "trustedBy": "Trusted by",
+      "patients": "patients",
+      "floatingCard1Title": "Next Appointment",
+      "floatingCard1Sub": "Dr. Smith — 2:30 PM",
+      "floatingCard2Title": "Health Score",
+      "floatingCard2Sub": "Excellent — 96/100",
+      "floatingCard3Title": "AI Assistant",
+      "floatingCard3Sub": "Always available"
     },
     "portals": {
       "title": "Choose Your Portal",
@@ -149,8 +163,9 @@
     },
     "features": {
       "title": "Why Choose MedCare?",
-      "subtitle": "Experience healthcare management reimagined",
+      "subtitle": "Experience healthcare management reimagined with our all-in-one platform",
       "madeSimple": "Made Simple",
+      "badge": "Powerful Features",
       "platformDescription": "Our platform brings together cutting-edge technology and compassionate care to deliver a seamless healthcare experience.",
       "ai": {
         "title": "AI Health Assistant",
@@ -191,7 +206,69 @@
       "hipaa": "HIPAA Compliant",
       "secure": "256-bit Encryption",
       "support": "24/7 Support",
-      "securePrivate": "Secure & Private"
+      "securePrivate": "Secure & Private",
+      "verified": "Verified Doctors"
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Get started in just 4 simple steps",
+      "badge": "Simple Process",
+      "step1Title": "Create Account",
+      "step1Desc": "Sign up in minutes with your email. No credit card required to get started.",
+      "step2Title": "Describe Symptoms",
+      "step2Desc": "Chat with our AI assistant or browse doctors by specialty.",
+      "step3Title": "Book Appointment",
+      "step3Desc": "Choose your preferred doctor and time slot that works for you.",
+      "step4Title": "Get Care",
+      "step4Desc": "Visit the doctor or join a video consultation. Access records anytime."
+    },
+    "testimonials": {
+      "title": "Loved by Thousands",
+      "subtitle": "See what our users have to say about MedCare",
+      "badge": "Testimonials",
+      "quote1": "MedCare has completely transformed how I manage my health. The AI assistant is incredibly helpful!",
+      "author1": "Sarah Johnson",
+      "role1": "Patient",
+      "quote2": "As a doctor, this platform streamlines my practice. Scheduling and records management is seamless.",
+      "author2": "Dr. Michael Chen",
+      "role2": "Cardiologist",
+      "quote3": "Booking appointments is so easy now. I can see my doctor availability instantly.",
+      "author3": "Emily Rodriguez",
+      "role3": "Patient"
+    },
+    "benefits": {
+      "badge": "Why Choose Us",
+      "title": "Healthcare That Works For You",
+      "subtitle": "Experience the difference with our patient-first approach",
+      "time": {
+        "title": "Save Time",
+        "desc": "Book appointments in seconds, not hours. No more waiting on hold."
+      },
+      "secure": {
+        "title": "Secure & Private",
+        "desc": "Your health data is protected with bank-level encryption."
+      },
+      "access": {
+        "title": "Access Anywhere",
+        "desc": "View records and manage appointments from any device."
+      },
+      "ai": {
+        "title": "AI-Powered",
+        "desc": "Get instant health insights and symptom analysis 24/7."
+      }
+    },
+    "faq": {
+      "badge": "FAQ",
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know",
+      "q1": "How do I book an appointment?",
+      "a1": "Simply create an account, search for a doctor by specialty or name, select an available time slot, and confirm your booking. You'll receive a confirmation email instantly.",
+      "q2": "Is my health data secure?",
+      "a2": "Absolutely. We use bank-level 256-bit encryption and are fully HIPAA compliant. Your data is never shared without your explicit consent.",
+      "q3": "How does the AI assistant work?",
+      "a3": "Our AI assistant analyzes your symptoms and provides preliminary guidance. It can recommend specialists, answer health questions, and help you prepare for appointments. It's available 24/7.",
+      "q4": "Can I access my medical records?",
+      "a4": "Yes! All your medical records, prescriptions, and visit history are securely stored and accessible from your dashboard anytime, anywhere."
     },
     "cta": {
       "title": "Ready to Transform Your Healthcare Experience?",
@@ -246,6 +323,87 @@
     "doctorDemo": "Doctor: doctor@example.com / password",
     "aiPoweredPlatform": "AI-powered healthcare management platform"
   },
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to access your health dashboard",
+    "forgotPassword": "Forgot password?",
+    "passwordPlaceholder": "Enter your password",
+    "newHere": "New to MedCare?",
+    "createAccount": "Create an account",
+    "secureNote": "Your connection is encrypted and your data is protected",
+    "hero": {
+      "title": "Your Health, One Click Away",
+      "subtitle": "Access your appointments, medical records, and AI-powered health insights all in one place."
+    },
+    "features": {
+      "doctors": {
+        "title": "Top Doctors",
+        "desc": "Connect with verified healthcare professionals"
+      },
+      "appointments": {
+        "title": "Easy Scheduling",
+        "desc": "Book and manage appointments effortlessly"
+      },
+      "ai": {
+        "title": "AI Health Assistant",
+        "desc": "Get instant health insights and recommendations"
+      }
+    },
+    "trust": {
+      "secure": "Bank-level Security",
+      "patients": "50K+ Active Users",
+      "ai": "AI-Powered Platform"
+    }
+  },
+  "register": {
+    "stepIndicator": "Step {{current}} of {{total}}",
+    "createAccount": "Create Account",
+    "hero": {
+      "title": "Start Your Health Journey Today",
+      "subtitle": "Join thousands of patients who trust MedCare for their healthcare needs. Access top doctors, manage appointments, and get AI-powered health insights.",
+      "trusted": "Trusted by healthcare professionals worldwide"
+    },
+    "features": {
+      "secure": "HIPAA Compliant",
+      "fast": "Quick Setup",
+      "ai": "AI-Powered"
+    },
+    "stats": {
+      "patients": "Happy Patients",
+      "doctors": "Verified Doctors",
+      "rating": "User Rating"
+    },
+    "step1": {
+      "title": "What's your name?",
+      "subtitle": "Let's start by getting to know you"
+    },
+    "step2": {
+      "title": "How can we reach you?",
+      "subtitle": "We'll use this to keep you updated"
+    },
+    "step3": {
+      "title": "Secure your account",
+      "subtitle": "Create a strong password to protect your data",
+      "passwordPlaceholder": "Create a secure password",
+      "confirmPlaceholder": "Confirm your password",
+      "passwordHint": "At least 8 characters with letters and numbers",
+      "passwordsMatch": "Passwords match",
+      "passwordsNoMatch": "Passwords don't match"
+    },
+    "errors": {
+      "nameRequired": "Please enter your first and last name",
+      "emailRequired": "Please enter your email address",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Please create a password",
+      "passwordTooShort": "Password must be at least 8 characters"
+    },
+    "terms": {
+      "text": "By creating an account, you agree to our",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy"
+    }
+  },
   "nav": {
     "dashboard": "Dashboard",
     "aiConsultation": "AI Consultation",
@@ -267,6 +425,31 @@
     "patient": "Patient Portal",
     "doctor": "Doctor Portal",
     "admin": "Admin Dashboard"
+  },
+  "sidebar": {
+    "premium": "Go Premium",
+    "premiumDesc": "Unlock unlimited AI consultations and priority booking",
+    "upgrade": "Upgrade Now",
+    "adminTools": "Admin Tools",
+    "adminToolsDesc": "Access system settings and configurations",
+    "configure": "Configure",
+    "practiceStatus": "Practice Status",
+    "practiceStatusDesc": "You are available for appointments",
+    "manageSchedule": "Manage Schedule"
+  },
+  "dashboard": {
+    "greetings": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "askAi": "Ask AI",
+    "explore": "Explore",
+    "activitySummary": "Activity Summary",
+    "thisWeek": "This week",
+    "consultations": "Consultations",
+    "appointments": "Appointments",
+    "healthScore": "Health Score"
   },
   "errors": {
     "unauthorized": "Unauthorized Access",
@@ -333,17 +516,28 @@
     "tryAdjustingFilters": "Try adjusting your search or filters.",
     "noAvailableDoctors": "There are no available doctors at the moment.",
     "yearsExperience": "{{years}} years experience",
+    "experience": "Experience",
     "about": "About",
     "license": "License",
     "bookAppointmentBtn": "Book Appointment",
     "verifiedNote": "All listed doctors are verified healthcare professionals. Click \"Book Appointment\" to schedule a consultation.",
+    "verifiedProfessional": "Verified Professional",
+    "verifiedProfessionals": "Verified Healthcare Professionals",
     "appointmentDateTime": "Appointment Date & Time *",
     "notesOptional": "Notes (Optional)",
     "confirmBooking": "Confirm Booking",
     "booking": "Booking...",
     "bookingSuccess": "Appointment booked successfully!",
     "bookingFailed": "Failed to book appointment. Please try again.",
-    "fillAllFields": "Please fill in all required fields"
+    "fillAllFields": "Please fill in all required fields",
+    "selectDate": "Select a Date",
+    "selectTime": "Select a Time",
+    "workingDay": "Working day",
+    "unavailable": "Unavailable",
+    "noScheduleAvailable": "This doctor has not set up their schedule yet.",
+    "noSlotsForDate": "No time slots available for this date.",
+    "allSlotsBooked": "All slots are booked for this date.",
+    "tryDate": "Try"
   },
   "patientRecords": {
     "title": "My Medical Records",
@@ -387,7 +581,17 @@
     "completeConsultation": "Complete Consultation",
     "completing": "Completing...",
     "consultationAnalysis": "Consultation Analysis",
-    "typeMessage": "Type your message... (Shift+Enter for new line)"
+    "typeMessage": "Type your message... (Shift+Enter for new line)",
+    "urgency": "urgency",
+    "bookAppointment": "Book",
+    "recommendSpecialization": "We recommend consulting a {{specialization}} specialist for your symptoms.",
+    "externalResources": "Find a Specialist",
+    "noMatchingDoctors": "We don't have {{specialization}} specialists on our platform yet, but here are some resources to help you find one.",
+    "findDoctorsOnline": "Find doctors online:",
+    "emergencyContacts": "Emergency Contacts",
+    "emergency": "Emergency",
+    "poisonControl": "Poison Control",
+    "mentalHealth": "Mental Health"
   },
   "applyDoctor": {
     "doctorStatus": "Doctor Status",
@@ -435,10 +639,21 @@
     "todaySchedule": "Today's Schedule",
     "appointmentsFor": "Your appointments for {{date}}",
     "noAppointmentsToday": "No appointments scheduled for today",
+    "noAppointmentsDesc": "Your schedule is clear. Enjoy your day or use this time to catch up on patient records.",
     "yourRating": "Your Rating",
     "basedOnFeedback": "Based on patient feedback",
     "quickActions": "Quick Actions",
-    "sidebarInstructions": "Use the sidebar to manage your schedule, view patients, or update medical records."
+    "sidebarInstructions": "Use the sidebar to manage your schedule, view patients, or update medical records.",
+    "manageAvailability": "Manage Availability",
+    "manageAvailabilityDesc": "Set your weekly schedule and working hours",
+    "viewPatientList": "View Patient List",
+    "viewPatientListDesc": "Access and manage your patient records",
+    "accessEMR": "Access EMR",
+    "accessEMRDesc": "View and update electronic medical records",
+    "emrTitle": "Electronic Medical Records",
+    "emrDescription": "Quick access to patient records and medical history",
+    "accessRecords": "Access Records",
+    "viewAll": "View All"
   },
   "doctorAppointments": {
     "title": "My Appointments",
@@ -458,11 +673,15 @@
     "selectedDay": "Selected Day",
     "statistics": "Statistics",
     "appointmentsForSelectedDate": "Your patient appointments for the selected date",
-    "nothingScheduledDays": "Nothing scheduled in the next {{days}} days."
+    "nothingScheduledDays": "Nothing scheduled in the next {{days}} days.",
+    "confirm": "Confirm Appointment",
+    "startAppointment": "Start Appointment",
+    "complete": "Complete Appointment",
+    "markNoShow": "Mark No-Show"
   },
   "doctorPatients": {
     "title": "My Patients",
-    "subtitle": "View and manage your patient list",
+    "subtitle": "You have {{count}} patients under your care",
     "filterByDate": "Filter by Date",
     "lastVisit": "Last Visit",
     "totalVisits": "Total Visits",
@@ -470,8 +689,19 @@
     "noPatientsFound": "No patients found",
     "failedToLoad": "Failed to load patients. Please try again later.",
     "patients": "patients",
-    "searchPlaceholder": "Search patients by name or email...",
-    "viewDetails": "View patient details"
+    "searchPlaceholder": "Search patients by name, email or phone...",
+    "viewDetails": "View patient details",
+    "totalPatients": "Total Patients",
+    "totalAppointments": "Total Appointments",
+    "visits": "Visits",
+    "patientDetails": "Patient Details",
+    "contactInfo": "Contact Information",
+    "appointmentHistory": "Appointment History",
+    "medicalRecords": "Medical Records",
+    "generalConsultation": "General consultation",
+    "noMedicalRecords": "No medical records found for this patient",
+    "noSearchResults": "No patients match your search",
+    "noAppointmentsYet": "You don't have any appointments with patients yet"
   },
   "doctorSchedule": {
     "title": "Weekly Availability",
@@ -503,7 +733,26 @@
     "duration": "Duration",
     "instructions": "Instructions",
     "failedToLoad": "Failed to load EMR records. Please try again later.",
-    "records": "records"
+    "records": "records",
+    "createRecord": "Create Medical Record",
+    "totalRecords": "Total Records",
+    "searchPlaceholder": "Search by patient name or diagnosis...",
+    "prescribed": "Prescribed",
+    "createFirstRecord": "Create your first medical record",
+    "createdOn": "Created on",
+    "noDiagnosis": "No diagnosis provided",
+    "createRecordDescription": "Create a new medical record for a patient",
+    "selectPatient": "Select a patient...",
+    "linkToAppointment": "Link to Appointment (Optional)",
+    "selectAppointment": "Select an appointment...",
+    "noAppointment": "No linked appointment",
+    "diagnosisPlaceholder": "Enter the diagnosis, findings, and clinical assessment...",
+    "prescriptionPlaceholder": "Enter medications, dosage, and instructions...",
+    "notesPlaceholder": "Additional notes or observations...",
+    "patientRequired": "Please select a patient",
+    "diagnosisRequired": "Please enter a diagnosis",
+    "saveRecord": "Save Record",
+    "saving": "Saving..."
   },
   "adminDashboard": {
     "title": "Dashboard",
@@ -520,7 +769,9 @@
     "completed": "Completed",
     "medicalRecords": "Medical Records",
     "quickActions": "Quick Actions",
-    "sidebarInstructions": "Use the sidebar navigation to manage users, doctors, appointments, and access the AI symptom checker."
+    "sidebarInstructions": "Use the sidebar navigation to manage users, doctors, appointments, and access the AI symptom checker.",
+    "systemOverview": "System Overview",
+    "reviewPendingApplications": "Review and manage doctor applications"
   },
   "adminUsers": {
     "title": "Users",
@@ -601,7 +852,8 @@
     "createFailed": "Failed to create booking",
     "updateFailed": "Failed to update booking",
     "cancelFailed": "Failed to cancel booking",
-    "saveFailed": "Failed to save booking. Please try again."
+    "saveFailed": "Failed to save booking. Please try again.",
+    "selectPatient": "Please select a patient"
   },
   "adminSymptomChecker": {
     "title": "AI Symptom Checker",
@@ -626,19 +878,19 @@
       "fever": "Fever",
       "headache": "Headache",
       "cough": "Cough",
-      "soreThroat": "Sore throat",
+      "sorethroat": "Sore Throat",
       "fatigue": "Fatigue",
       "nausea": "Nausea",
       "vomiting": "Vomiting",
       "diarrhea": "Diarrhea",
-      "abdominalPain": "Abdominal pain",
-      "chestPain": "Chest pain",
-      "shortnessOfBreath": "Shortness of breath",
+      "abdominalpain": "Abdominal Pain",
+      "chestpain": "Chest Pain",
+      "shortnessofbreath": "Shortness of Breath",
       "dizziness": "Dizziness",
-      "jointPain": "Joint pain",
-      "musclePain": "Muscle pain",
+      "jointpain": "Joint Pain",
+      "musclepain": "Muscle Pain",
       "rash": "Rash",
-      "runnyNose": "Runny nose",
+      "runnynose": "Runny Nose",
       "congestion": "Congestion"
     }
   },
