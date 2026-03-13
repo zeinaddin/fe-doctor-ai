@@ -61,12 +61,15 @@ export const getDefaultPortalPath = (user: User): string => {
     return '/patient/dashboard';
 };
 
-export const getUserNames = (user: User) => {
-    const names = user.full_name.split(' ');
-    return {
-        firstName: names[0] || '',
-        lastName: names.slice(1).join(' ') || '',
-    };
+export const getUserNames = (user: User): { firstName: string; lastName: string } => {
+    if (user.full_name) {
+        const names = user.full_name.split(' ');
+        return {
+            firstName: names[0] || '',
+            lastName: names.slice(1).join(' ') || '',
+        };
+    }
+    return { firstName: '', lastName: '' };
 };
 
 
@@ -320,53 +323,138 @@ export interface SpecializationFormData {
     description: string;
 }
 
-// AI Consultation types - backend returns lowercase
-export const ConsultationStatus = {
+// Chat Session types - matches backend API
+export const ChatSessionStatus = {
     ACTIVE: 'active',
-    COMPLETED: 'completed',
-    CANCELLED: 'cancelled',
+    CLOSED: 'closed',
 } as const;
 
-export type ConsultationStatus = typeof ConsultationStatus[keyof typeof ConsultationStatus];
+export type ChatSessionStatus = typeof ChatSessionStatus[keyof typeof ChatSessionStatus];
+
+export const ChatSource = {
+    WEB: 'web',
+    MOBILE: 'mobile',
+    TELEGRAM: 'telegram',
+    WHATSAPP: 'whatsapp',
+} as const;
+
+export type ChatSource = typeof ChatSource[keyof typeof ChatSource];
+
+export const MessageRole = {
+    USER: 'user',
+    ASSISTANT: 'assistant',
+    SYSTEM: 'system',
+} as const;
+
+export type MessageRole = typeof MessageRole[keyof typeof MessageRole];
+
+export const UrgencyLevel = {
+    LOW: 'low',
+    MEDIUM: 'medium',
+    HIGH: 'high',
+    EMERGENCY: 'emergency',
+} as const;
+
+export type UrgencyLevel = typeof UrgencyLevel[keyof typeof UrgencyLevel];
 
 export interface ChatMessage {
     id: number;
-    consultation_id: number;
-    role: 'user' | 'assistant' | 'system';
+    role: MessageRole;
     content: string;
+    content_type: string;
+    model_name?: string;
+    prompt_version?: string;
+    token_input?: number;
+    token_output?: number;
+    latency_ms?: number;
+    session_id: number;
     created_at: string;
 }
 
-export interface Consultation {
+export interface ChatSession {
     id: number;
-    symptoms_text: string;
-    recommended_specialization?: string;
-    confidence?: number;
-    status: string;
+    status: ChatSessionStatus;
+    source: ChatSource;
+    locale?: string;
+    last_message_at?: string;
+    context_json?: Record<string, unknown>;
+    user_id?: number;
     created_at: string;
-    patient_id: number;
+    updated_at: string;
 }
 
-export interface ConsultationWithMessages {
-    consultation: Consultation;
+export interface ChatSessionWithMessages extends ChatSession {
     messages: ChatMessage[];
 }
 
+export interface TriageCandidate {
+    id: number;
+    rank: number;
+    score: number;
+    reason?: string;
+    matched_filters_json?: Record<string, unknown>;
+    triage_run_id: number;
+    doctor_id: number;
+    doctor_name: string;
+    doctor_bio: string;
+    doctor_rating: number;
+    doctor_experience_years: number;
+    specialization_name: string;
+}
+
+export interface TriageRun {
+    id: number;
+    status: string;
+    urgency?: UrgencyLevel;
+    confidence?: number;
+    notes?: string;
+    inputs_json?: Record<string, unknown>;
+    outputs_json?: Record<string, unknown>;
+    filters_json?: Record<string, unknown>;
+    model_name?: string;
+    prompt_version?: string;
+    temperature?: number;
+    token_input?: number;
+    token_output?: number;
+    latency_ms?: number;
+    error_message?: string;
+    session_id: number;
+    trigger_message_id?: number;
+    recommended_specialization_id?: number;
+    created_at: string;
+}
+
+export interface TriageRunWithDetails extends TriageRun {
+    specialization_name?: string;
+    candidates: TriageCandidate[];
+}
+
+export interface CreateChatSessionRequest {
+    source?: ChatSource;
+    locale?: string;
+    context_json?: Record<string, unknown>;
+}
+
+export interface SendChatMessageRequest {
+    content: string;
+    role?: MessageRole;
+    content_type?: string;
+}
+
+export interface CreateTriageRequest {
+    trigger_message_id?: number;
+    inputs_json?: Record<string, unknown>;
+    recommended_specialization_id?: number;
+}
+
+// Legacy aliases for backwards compatibility
+export type Consultation = ChatSession;
+export type ConsultationWithMessages = ChatSessionWithMessages;
+export type ConsultationStatus = ChatSessionStatus;
+export const ConsultationStatus = ChatSessionStatus;
+
 export interface ConsultationAnalysis {
-    analysis: {
-        summary?: string;
-        symptoms?: string[];
-        recommended_specialization?: string;
-        urgency_level?: string;
-        recommendations?: string[];
-    };
-    recommended_doctors: Array<{
-        id: number;
-        name: string;
-        specialty: string;
-        rating?: number;
-        yearsOfExperience?: number;
-    }>;
+    triage: TriageRunWithDetails;
 }
 
 export interface StartConsultationRequest {

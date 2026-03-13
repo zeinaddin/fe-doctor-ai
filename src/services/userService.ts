@@ -35,7 +35,7 @@ export const userService = {
     },
 
     async createUser(userData: Partial<User> & { password: string }): Promise<User> {
-        const response = await api.post<User>('/admin/users', userData);
+        const response = await api.post<User>('/users/register', userData);
         return response.data;
     },
 

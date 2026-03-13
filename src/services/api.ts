@@ -1,6 +1,6 @@
 import axios, {type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig} from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8005/api/v1';
 
 const api: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -45,10 +45,8 @@ api.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-        // If 401 and not already retrying
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
-                // If already refreshing, queue this request
                 return new Promise((resolve, reject) => {
                     failedQueue.push({resolve, reject});
                 })
@@ -67,7 +65,6 @@ api.interceptors.response.use(
             const refreshToken = localStorage.getItem('refresh_token');
 
             if (!refreshToken) {
-                // No refresh token, redirect to login
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('user');
@@ -89,17 +86,14 @@ api.interceptors.response.use(
                     localStorage.setItem('refresh_token', new_refresh_token);
                 }
 
-                // Update authorization header
                 if (originalRequest.headers) {
                     originalRequest.headers.Authorization = `Bearer ${access_token}`;
                 }
 
                 processQueue(null, access_token);
 
-                // Retry original request
                 return api(originalRequest);
             } catch (refreshError) {
-                // Refresh failed, logout user
                 processQueue(refreshError as Error, null);
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
@@ -111,22 +105,8 @@ api.interceptors.response.use(
             }
         }
 
-        // For other errors, just reject
         return Promise.reject(error);
     }
 );
 
 export default api;
-
-export const handleApiError = (error: unknown): string => {
-    if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message?: string; detail?: string }>;
-        return (
-            axiosError.response?.data?.message ||
-            axiosError.response?.data?.detail ||
-            axiosError.message ||
-            'An unexpected error occurred'
-        );
-    }
-    return 'An unexpected error occurred';
-};

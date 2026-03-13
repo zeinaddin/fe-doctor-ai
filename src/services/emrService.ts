@@ -11,6 +11,15 @@ export const emrService = {
     },
 
     async getMyEMRs(skip = 0, limit = 10): Promise<EMR[]> {
+        // For doctors: get records they created
+        const response = await api.get<EMR[]>('/medical-records/doctor/me', {
+            params: {skip, limit}
+        });
+        return response.data;
+    },
+
+    async getMyPatientEMRs(skip = 0, limit = 10): Promise<EMR[]> {
+        // For patients: get their own records
         const response = await api.get<EMR[]>('/medical-records/me', {
             params: {skip, limit}
         });

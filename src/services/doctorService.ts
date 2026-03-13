@@ -68,11 +68,37 @@ export const doctorService = {
     },
 
     async getDoctorStats(): Promise<DoctorDashboardStats> {
+        // Get today's stats from appointments endpoint
+        const today = new Date().toISOString().split('T')[0];
+        const statsResponse = await api.get<{
+            total: number;
+            active: number;
+            done: number;
+            scheduled: number;
+            confirmed: number;
+            in_progress: number;
+            completed: number;
+            cancelled: number;
+            no_show: number;
+        }>('/appointments/doctor/me/stats', { params: { date: today } });
+
+        // Get all-time stats (without date filter)
+        const allTimeResponse = await api.get<{
+            total: number;
+            active: number;
+            done: number;
+            completed: number;
+        }>('/appointments/doctor/me/stats');
+
+        // Get unique patients count from all appointments
+        const appointmentsResponse = await api.get<Array<{ patient_id: number }>>('/appointments/doctor/me');
+        const uniquePatients = new Set(appointmentsResponse.data.map(a => a.patient_id));
+
         return {
-            totalPatients: 0,
-            todayAppointments: 0,
-            completedAppointments: 0,
-            upcomingAppointments: 0,
+            todayAppointments: statsResponse.data.total || 0,
+            upcomingAppointments: statsResponse.data.active || 0,
+            completedAppointments: allTimeResponse.data.completed || 0,
+            totalPatients: uniquePatients.size,
         };
     },
 };
