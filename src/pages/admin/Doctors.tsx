@@ -30,8 +30,8 @@ export const Doctors: React.FC = () => {
     const [previewDoctor, setPreviewDoctor] = useState<Doctor | null>(null)
 
     const {data, isLoading} = useQuery<Doctor[] | PaginatedResponse<Doctor>>({
-        queryKey: ["doctors", page + 1, rowsPerPage],
-        queryFn: () => doctorService.getDoctors(page + 1, rowsPerPage),
+        queryKey: ["doctors", page, rowsPerPage],
+        queryFn: () => doctorService.getDoctors(page * rowsPerPage, rowsPerPage),
     })
 
     const deleteDoctorMutation = useMutation({
