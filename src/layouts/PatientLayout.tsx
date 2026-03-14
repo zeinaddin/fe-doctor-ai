@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bot,
   Calendar,
@@ -9,18 +10,78 @@ import {
   HeartPulse,
   LayoutDashboard,
   LogOut,
-  Menu,
   Search,
   Stethoscope,
-  X,
+  User,
+  Bell,
+  Settings,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { PortalSwitcher } from '@/components/common/PortalSwitcher';
+import { MobileBottomNav } from '@/components/mobile';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserNames } from '../types';
 import { cn } from '@/lib/utils';
+
+// Nav item component with animation
+const NavItem = ({
+  item,
+  isActive,
+  onClick,
+}: {
+  item: { title: string; icon: React.ElementType; href: string; badge?: string };
+  isActive: boolean;
+  onClick: () => void;
+}) => {
+  const Icon = item.icon;
+
+  return (
+    <motion.button
+      whileHover={{ x: 4 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className={cn(
+        'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative group',
+        isActive
+          ? 'bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-teal-700'
+          : 'text-gray-600 hover:bg-gray-100/80 hover:text-gray-900'
+      )}
+    >
+      {/* Active indicator */}
+      {isActive && (
+        <motion.div
+          layoutId="activeIndicator"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        />
+      )}
+
+      <div
+        className={cn(
+          'p-2 rounded-lg transition-all duration-200',
+          isActive
+            ? 'bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/25'
+            : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-700'
+        )}
+      >
+        <Icon className="h-4 w-4" />
+      </div>
+
+      <span className="flex-1 text-left">{item.title}</span>
+
+      {item.badge && (
+        <span className="px-2 py-0.5 text-xs font-medium bg-teal-100 text-teal-700 rounded-full">
+          {item.badge}
+        </span>
+      )}
+
+      {isActive && <ChevronRight className="h-4 w-4 text-teal-500" />}
+    </motion.button>
+  );
+};
 
 export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -31,11 +92,20 @@ export const PatientLayout: React.FC = () => {
 
   const navItems = [
     { title: t('nav.dashboard'), icon: LayoutDashboard, href: '/patient/dashboard' },
-    { title: t('nav.aiConsultation'), icon: Bot, href: '/patient/ai-consultation' },
+    { title: t('nav.aiConsultation'), icon: Bot, href: '/patient/ai-consultation', badge: 'AI' },
     { title: t('nav.appointments'), icon: Calendar, href: '/patient/appointments' },
     { title: t('nav.findDoctors'), icon: Search, href: '/patient/find-doctors' },
     { title: t('nav.medicalRecords'), icon: FileText, href: '/patient/records' },
     { title: t('nav.applyAsDoctor'), icon: Stethoscope, href: '/patient/apply-doctor' },
+  ];
+
+  // Mobile bottom nav items (subset for cleaner mobile UX)
+  const mobileNavItems = [
+    { title: t('nav.home') || 'Home', icon: LayoutDashboard, href: '/patient/dashboard' },
+    { title: 'AI', icon: Bot, href: '/patient/ai-consultation', badge: 'NEW' },
+    { title: t('nav.doctors') || 'Doctors', icon: Search, href: '/patient/find-doctors' },
+    { title: t('nav.bookings') || 'Bookings', icon: Calendar, href: '/patient/appointments' },
+    { title: t('nav.profile') || 'Profile', icon: User, href: '/patient/records' },
   ];
 
   const handleLogout = async () => {
@@ -46,124 +116,197 @@ export const PatientLayout: React.FC = () => {
   const { firstName, lastName } = user ? getUserNames(user) : { firstName: '', lastName: '' };
 
   return (
-    <div className="min-h-screen bg-background theme-patient">
-      {/* Background Pattern */}
-      <div className="fixed inset-0 bg-medical-pattern opacity-30 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-br from-sky-50/50 via-transparent to-blue-50/30 pointer-events-none" />
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Subtle background pattern */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-50/50 via-transparent to-transparent pointer-events-none" />
 
-      {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-xl border-b border-gray-200/60 z-50 flex items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg healthcare-gradient flex items-center justify-center shadow-sm">
-            <HeartPulse className="h-4 w-4 text-white" />
+      {/* Mobile header - Sleek app-like design */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 pt-safe">
+        <div className="bg-white/90 backdrop-blur-xl border-b border-gray-100">
+          <div className="flex items-center justify-between h-14 px-4">
+            {/* User Avatar & Greeting */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSidebarOpen(true)}
+              className="flex items-center gap-3"
+            >
+              <Avatar className="h-10 w-10 ring-2 ring-white shadow-lg">
+                <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white font-semibold text-sm">
+                  {firstName[0]}{lastName[0]}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-left">
+                <p className="text-xs text-gray-500">{t('greeting.welcome') || 'Welcome back'}</p>
+                <p className="text-sm font-semibold text-gray-900">{firstName}</p>
+              </div>
+            </motion.button>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-1">
+              <LanguageSwitcher variant="dropdown" />
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <Button variant="ghost" size="icon" className="relative w-10 h-10 rounded-full">
+                  <Bell className="h-5 w-5 text-gray-600" />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                </Button>
+              </motion.div>
+            </div>
           </div>
-          <span className="font-bold text-gradient">{t('brand.name')}</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <PortalSwitcher />
-          <LanguageSwitcher variant="dropdown" />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
         </div>
-      </div>
+      </header>
 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-screen w-64 bg-white/95 backdrop-blur-xl border-r border-gray-200/60 transition-transform duration-300 ease-in-out",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          'fixed top-0 left-0 z-40 h-screen w-72 bg-white border-r border-gray-200/50 transition-transform duration-300 ease-out shadow-xl shadow-gray-200/50 lg:shadow-none',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="h-14 flex items-center justify-between px-4 border-b border-gray-200/60">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg healthcare-gradient flex items-center justify-center shadow-sm">
-                <HeartPulse className="h-4 w-4 text-white" />
+          {/* Logo & Brand */}
+          <div className="h-16 flex items-center justify-between px-5 border-b border-gray-100">
+            <Link to="/" className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
+                <HeartPulse className="h-5 w-5 text-white" />
               </div>
-              <span className="font-bold text-gradient">{t('brand.name')}</span>
+              <div>
+                <span className="font-bold text-lg bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                  {t('brand.name')}
+                </span>
+                <p className="text-[10px] text-gray-400 -mt-0.5">{t('portal.patient')}</p>
+              </div>
             </Link>
-            <LanguageSwitcher variant="dropdown" className="hidden lg:flex" />
           </div>
 
-          {/* Portal switcher (desktop) */}
-          <div className="px-4 py-3 border-b border-gray-200/60 hidden lg:block">
+          {/* Portal Switcher */}
+          <div className="px-4 py-3 border-b border-gray-100">
             <PortalSwitcher />
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              Menu
+            </p>
             {navItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <Button
+                <NavItem
                   key={item.href}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start gap-3 h-10 px-3 font-normal transition-all duration-200",
-                    isActive
-                      ? "bg-sky-50 text-sky-700 hover:bg-sky-100 font-medium"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  )}
+                  item={item}
+                  isActive={isActive}
                   onClick={() => {
                     navigate(item.href);
                     setSidebarOpen(false);
                   }}
-                >
-                  <item.icon className={cn("h-4 w-4", isActive && "text-sky-600")} />
-                  {item.title}
-                  {isActive && (
-                    <ChevronRight className="h-4 w-4 ml-auto text-sky-600" />
-                  )}
-                </Button>
+                />
               );
             })}
           </nav>
 
-          {/* User section */}
-          <div className="p-3 border-t border-gray-200/60">
-            <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 mb-2">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback className="bg-sky-100 text-sky-700 text-sm font-medium">
-                  {firstName[0]}{lastName[0]}
+          {/* Pro Upgrade Card */}
+          <div className="px-4 py-3">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 p-4 text-white">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="h-5 w-5" />
+                  <span className="font-semibold">{t('sidebar.premium')}</span>
+                </div>
+                <p className="text-xs text-white/80 mb-3">{t('sidebar.premiumDesc')}</p>
+                <Button
+                  size="sm"
+                  className="w-full bg-white text-teal-600 hover:bg-white/90 font-medium shadow-lg"
+                >
+                  {t('sidebar.upgrade')}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* User Section */}
+          <div className="p-4 border-t border-gray-100">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
+              <Avatar className="h-10 w-10 ring-2 ring-white shadow-md">
+                <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white font-medium">
+                  {firstName[0]}
+                  {lastName[0]}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{user?.full_name}</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">{user?.full_name}</p>
                 <p className="text-xs text-gray-500 truncate">{user?.email}</p>
               </div>
+              <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <Settings className="h-4 w-4 text-gray-400" />
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-2 h-9 text-gray-600 hover:text-gray-900"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              {t('common.signOut')}
-            </Button>
+
+            <div className="flex gap-2 mt-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 justify-center gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                {t('common.signOut')}
+              </Button>
+              <LanguageSwitcher variant="dropdown" className="hidden lg:flex" />
+            </div>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="lg:ml-64 min-h-screen relative z-10">
-        <div className="p-4 pt-18 lg:p-6 lg:pt-6">
+      <main className="lg:ml-72 min-h-screen">
+        {/* Desktop header */}
+        <header className="hidden lg:flex h-16 items-center justify-between px-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm sticky top-0 z-30">
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-semibold text-gray-900">
+              {navItems.find((item) => item.href === location.pathname)?.title || t('nav.dashboard')}
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-5 w-5 text-gray-500" />
+              <span className="absolute top-2 right-2 h-2 w-2 bg-teal-500 rounded-full animate-pulse" />
+            </Button>
+            <div className="h-8 w-px bg-gray-200" />
+            <div className="flex items-center gap-3">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white text-xs font-medium">
+                  {firstName[0]}
+                  {lastName[0]}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium text-gray-700">{firstName}</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Page content - extra padding for mobile bottom nav */}
+        <div className="p-4 pt-20 pb-24 lg:p-6 lg:pt-6 lg:pb-6">
           <Outlet />
         </div>
       </main>
 
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav items={mobileNavItems} accentColor="teal" />
+
+      {/* Mobile overlay for sidebar */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
