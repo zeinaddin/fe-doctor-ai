@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Medical Teal Colors -->
+    <color name="colorPrimary">#0D9488</color>
+    <color name="colorPrimaryDark">#0F766E</color>
+    <color name="colorAccent">#14B8A6</color>
+
+    <!-- Status Bar -->
+    <color name="colorStatusBar">#0D9488</color>
+
+    <!-- Navigation Bar -->
+    <color name="colorNavigationBar">#FFFFFF</color>
+
+    <!-- Splash Screen -->
+    <color name="splashBackground">#0D9488</color>
+</resources>
