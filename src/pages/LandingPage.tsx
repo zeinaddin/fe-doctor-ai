@@ -58,7 +58,7 @@ const HeroSection: React.FC<{ onGetStarted: () => void }> = ({ onGetStarted }) =
   const { t } = useTranslation();
 
   return (
-    <section className="relative pt-28 pb-20 lg:pb-32 px-6 overflow-hidden">
+    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-16 sm:pb-20 lg:pb-32 px-4 sm:px-6 overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[image:var(--hero-gradient)] opacity-[0.03] rounded-full blur-3xl -translate-y-1/3 translate-x-1/4" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent opacity-[0.04] rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
@@ -81,13 +81,13 @@ const HeroSection: React.FC<{ onGetStarted: () => void }> = ({ onGetStarted }) =
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] xl:text-6xl font-bold text-foreground leading-[1.1] mb-6 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[3.5rem] xl:text-6xl font-bold text-foreground leading-[1.15] mb-4 sm:mb-6 tracking-tight">
             {t('landing.hero.title')},{' '}
             <span className="hero-text-gradient">{t('landing.hero.titleHighlight', 'Simplified')}</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mb-6 sm:mb-8 leading-relaxed">
             {t('landing.hero.subtitle')}
           </p>
 
@@ -139,30 +139,30 @@ const HeroSection: React.FC<{ onGetStarted: () => void }> = ({ onGetStarted }) =
           {/* Glow effect behind image */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-cyan-400/10 to-transparent rounded-full blur-3xl scale-90" />
 
-          {/* Floating appointment card */}
+          {/* Floating appointment card - hidden on small screens */}
           <motion.div
-            className="absolute top-4 right-0 lg:right-8 bg-white rounded-2xl shadow-xl p-4 border border-gray-100 z-20 max-w-[180px]"
+            className="hidden sm:block absolute top-4 right-0 lg:right-8 bg-white rounded-2xl shadow-xl p-3 sm:p-4 border border-gray-100 z-20 max-w-[160px] sm:max-w-[180px]"
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center shadow-lg shadow-primary/25">
-                <Calendar className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center shadow-lg shadow-primary/25">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-xs sm:text-sm font-semibold text-foreground">
                   {t('landing.hero.floatingCard1Title', 'Next Appointment')}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
                   {t('landing.hero.floatingCard1Sub', 'Dr. Smith — 2:30 PM')}
                 </p>
               </div>
             </div>
           </motion.div>
 
-          {/* Floating health score card */}
+          {/* Floating health score card - hidden on small screens */}
           <motion.div
-            className="absolute bottom-20 left-0 lg:left-8 bg-white rounded-2xl shadow-xl p-4 border border-gray-100 z-20"
+            className="hidden sm:block absolute bottom-20 left-0 lg:left-8 bg-white rounded-2xl shadow-xl p-3 sm:p-4 border border-gray-100 z-20"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
           >
@@ -184,9 +184,9 @@ const HeroSection: React.FC<{ onGetStarted: () => void }> = ({ onGetStarted }) =
             </div>
           </motion.div>
 
-          {/* AI Assistant card */}
+          {/* AI Assistant card - hidden on small screens */}
           <motion.div
-            className="absolute top-1/2 -left-4 lg:left-0 bg-white rounded-2xl shadow-xl p-4 border border-gray-100 z-20"
+            className="hidden sm:block absolute top-1/2 -left-4 lg:left-0 bg-white rounded-2xl shadow-xl p-3 sm:p-4 border border-gray-100 z-20"
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           >
@@ -230,18 +230,18 @@ const TrustBar: React.FC = () => {
 
   return (
     <motion.section
-      className="py-8 border-y border-gray-100 bg-white"
+      className="py-4 sm:py-6 lg:py-8 border-y border-gray-100 bg-white"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
       variants={fadeIn}
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-x-6 sm:gap-x-8 lg:gap-x-12 gap-y-3 sm:gap-y-4">
           {trustItems.map((item, index) => (
-            <div key={index} className="flex items-center gap-2.5 text-sm text-muted-foreground">
-              <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center">
-                <item.icon className="h-4 w-4 text-primary" />
+            <div key={index} className="flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm text-muted-foreground">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/5 flex items-center justify-center flex-shrink-0">
+                <item.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
               </div>
               <span className="font-medium">{item.text}</span>
             </div>
@@ -926,17 +926,17 @@ const Navigation: React.FC = () => {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 pt-safe',
         scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'
       )}
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center shadow-md shadow-primary/20">
-              <HeartPulse className="h-5 w-5 text-white" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
+          <Link to="/" className="flex items-center gap-2 sm:gap-3">
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center shadow-md shadow-primary/20">
+              <HeartPulse className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <span className="text-xl font-bold hero-text-gradient">{t('brand.name')}</span>
+            <span className="text-lg sm:text-xl font-bold hero-text-gradient">{t('brand.name')}</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -954,15 +954,15 @@ const Navigation: React.FC = () => {
             </a>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher className="hidden sm:flex" />
-            <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="font-medium">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="font-medium text-xs sm:text-sm px-2 sm:px-3">
               {t('common.signIn')}
             </Button>
             <Button
               variant="hero"
               size="sm"
-              className="rounded-xl font-medium"
+              className="rounded-xl font-medium text-xs sm:text-sm px-3 sm:px-4"
               onClick={() => navigate('/register')}
             >
               {t('landing.hero.cta')}
@@ -983,7 +983,7 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background tap-highlight-none">
       <Navigation />
       <HeroSection onGetStarted={handleGetStarted} />
       <TrustBar />
